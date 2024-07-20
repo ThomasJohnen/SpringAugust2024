@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  title: Search Service
+  version: 1.0.0
+paths:
+  /search:
+    get:
+      summary: Search for profiles
+      parameters:
+        - name: language
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ageMin
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: ageMax
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of matching profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+        '400':
+          description: Something get wrong
+components:
+  schemas:
+    Profile:
+      type: object
+      properties:
+        userId:
+          type: string
+        biography:
+          type: string
+        interests:
+          type: string
+        contactable:
+          type: boolean

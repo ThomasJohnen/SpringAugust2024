@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: Profile Service
+  version: 1.0.0
+paths:
+  /profiles/{userId}:
+    get:
+      summary: Get profile by user ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profile details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Something get wrong
+    post:
+      summary: Update profile by user ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        '200':
+          description: Profile updated
+        '400':
+          description: Something get wrong
+
+components:
+  schemas:
+    Profile:
+      type: object
+      properties:
+        userId:
+          type: string
+        biography:
+          type: string
+        interests:
+          type: string
+        contactable:
+          type: boolean

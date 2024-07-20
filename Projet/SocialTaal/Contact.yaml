@@ -1,0 +1,63 @@
+openapi: 3.0.0
+info:
+  title: Contact Service API
+  version: 1.0.0
+paths:
+  /contacts:
+    post:
+      summary: Send a contact request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                senderId:
+                  type: string
+                receiverId:
+                  type: string
+      responses:
+        '201':
+          description: Contact request sent
+        '400':
+          description: Something get wrong
+
+  /contacts/{contactId}:
+    patch:
+      summary: Update contact status
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, active, closed]
+      responses:
+        '200':
+          description: Contact status updated
+        '400':
+          description: Something get wrong
+components:
+  schemas:
+    Contact:
+      type: object
+      properties:
+        id:
+          type: string
+        senderId:
+          type: string
+        receiverId:
+          type: string
+        status:
+          type: string
+          enum: [pending, active, closed]

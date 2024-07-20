@@ -1,0 +1,62 @@
+openapi: 3.0.0
+info:
+  title: Message Service
+  version: 1.0.0
+paths:
+  /messages:
+    post:
+      summary: Send a message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                senderId:
+                  type: string
+                receiverId:
+                  type: string
+                content:
+                  type: string
+      responses:
+        '201':
+          description: Message sent
+        '400':
+          description: Message not send
+  /messages/{contactId}:
+    get:
+      summary: Get messages by contact ID
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '404':
+          description: not found
+components:
+  schemas:
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        senderId:
+          type: string
+        receiverId:
+          type: string
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time

@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  title: User Service
+  version: 1.0.0
+paths:
+  /users:
+    post:
+      summary: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                gender:
+                  type: character
+                birthdate:
+                  type: string
+                  format: date
+                country:
+                  type: string
+                language:
+                  type: string
+      responses:
+        '201':
+          description: User created
+        '400':
+          description: User can't be created
+    get:
+      summary: Get a list of all users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /users/{userId}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: user not found
+    delete:
+      summary: Delete user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted
+        '400':
+          description: User can't be deleted
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        gender:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        country:
+          type: string
+        language:
+          type: string
+
