@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>SocialTaal</groupId>
-    <artifactId>Contacts</artifactId>
+    <artifactId>messages</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Contacts</name>
-    <description>Contacts</description>
+    <name>messages</name>
+    <description>messages</description>
     <url/>
     <licenses>
         <license/>
