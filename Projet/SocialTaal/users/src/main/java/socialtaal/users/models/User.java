@@ -14,17 +14,13 @@ import org.hibernate.annotations.Comment;
 @Entity(name = "Users")
 public class User {
 
-    public enum Gender {
-        MALE,
-        FEMALE;
-    }
 
     @Id
     @Column(nullable = false)
     private String pseudo;
 
     @Column(nullable = false)
-    private Gender gender;
+    private Genders gender;
 
     @Column(nullable = false)
     private String birthdate;

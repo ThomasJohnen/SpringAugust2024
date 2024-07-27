@@ -12,17 +12,22 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-@Entity(name = "Profiles")
-public class Profile {
+public class User {
 
+    public enum Gender {
+        MALE,
+        FEMALE;
+    }
 
-    @Id
     private String pseudo;
 
-    @Column
-    private String biography;
+    private Gender gender;
 
-    @Column
-    private boolean contactable = false;
+    private String birthdate;
 
+    private String birthCountry;
+
+    private String motherTongue;
+
+    private boolean disable = false;
 }

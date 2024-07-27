@@ -3,7 +3,7 @@ info:
   title: User Service
   version: 1.0.0
 servers:
-  - url http://localhost:9001
+  - url: http://localhost:9001
 paths:
   /users:
     post:
@@ -20,7 +20,7 @@ paths:
                 password:
                   type: string
                 gender:
-                  type: character
+                  type: string
                 birthdate:
                   type: string
                   format: date
@@ -33,6 +33,8 @@ paths:
           description: User created
         '400':
           description: User can't be created
+        '409':
+          description: User already exists
     get:
       summary: Get a list of all users
       responses:
@@ -81,16 +83,19 @@ components:
     User:
       type: object
       properties:
-        username:
+        pseudo:
           type: string
         gender:
           type: string
+          enum:
+            - MALE
+            - FEMALE
         birthdate:
           type: string
           format: date
-        country:
+        birthCountry:
           type: string
-        language:
+        motherTongue:
           type: string
         disable:
           type: boolean

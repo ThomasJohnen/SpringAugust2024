@@ -4,15 +4,25 @@ package socialtaal.users;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import socialtaal.users.models.Profile;
 import socialtaal.users.models.User;
+import socialtaal.users.models.UserReceive;
+import socialtaal.users.repository.ProfileProxy;
 
 @RestController
 public class UsersController {
 
     private final UsersServices service;
+    private final ProfileProxy profileProxy;
 
-    public UsersController(UsersServices service){
+    public UsersController(UsersServices service, ProfileProxy profileProxy) {
         this.service = service;
+        this.profileProxy = profileProxy;
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<Iterable<User>> getUsers(){
+        return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/users/{pseudo}")
@@ -24,12 +34,26 @@ public class UsersController {
     }
 
     @PostMapping("/users/{pseudo}")
-    public ResponseEntity<User> createUser(@PathVariable String pseudo, @RequestBody User user){
-        if(user.getPseudo() == null || user.getGender() == null || user.getBirthdate() == null || user.getBirthCountry() == null || user.getMotherTongue() == null)
+    public ResponseEntity<User> createUser(@PathVariable String pseudo, @RequestBody UserReceive userReceived){
+        if(userReceived.getPseudo() == null || userReceived.getGender() == null || userReceived.getBirthdate() == null || userReceived.getBirthCountry() == null || userReceived.getMotherTongue() == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if(service.getUser(pseudo) != null)
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        User user = new User();
+        user.setPseudo(pseudo);
+        user.setGender(userReceived.getGender());
+        user.setBirthdate(userReceived.getBirthdate());
+        user.setBirthCountry(userReceived.getBirthCountry());
+        user.setMotherTongue(userReceived.getMotherTongue());
+        if(userReceived.isDisable() == true)
+            user.setDisable(true);
         User savedUser = service.createOne(user);
+        Profile profile = new Profile();
+        profile.setPseudo(pseudo);
+        profile.setBiography(userReceived.getBiography());
+        if(userReceived.isContactable() == true)
+            profile.setContactable(true);
+        profileProxy.createProfile(profile.getPseudo(), profile);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
@@ -38,6 +62,7 @@ public class UsersController {
         if(service.getUser(pseudo) == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         service.deleteUser(pseudo);
+        profileProxy.deleteProfile(pseudo);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -3,7 +3,7 @@ info:
   title: Profile Service
   version: 1.0.0
 servers:
-  - url http://localhost:9002
+  - url: http://localhost:9002
 paths:
   /profiles/{userId}:
     get:
@@ -21,8 +21,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Profile'
-        '400':
-          description: Something get wrong
+        '404':
+          description: Profile not found
     post:
       summary: Create profile by user ID
       parameters:
@@ -39,10 +39,12 @@ paths:
               $ref: '#/components/schemas/Profile'
       responses:
         '200':
-          description: Profile updated
+          description: Profile created
         '400':
           description: Something get wrong
-    Patch:
+        '409':
+            description: Profile already exists
+    patch:
       summary: Update profile by user ID
       parameters:
         - name: userId
@@ -61,13 +63,30 @@ paths:
           description: Profile updated
         '400':
           description: Something get wrong
+        '404':
+          description: Profile not found
+    delete:
+      summary: Delete profile by user ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profile deleted
+        '404':
+          description: Profile not found
+        '400':
+          description: Something get wrong
 
 components:
   schemas:
     Profile:
       type: object
       properties:
-        username:
+        pseudo:
           type: string
         biography:
           type: string

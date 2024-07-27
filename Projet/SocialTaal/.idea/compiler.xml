@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="profiles" />
+        <module name="search" />
         <module name="eureka" />
         <module name="users" />
         <module name="authentication" />
@@ -23,6 +24,7 @@
       <module name="authentication" options="-parameters" />
       <module name="eureka" options="-parameters" />
       <module name="profiles" options="-parameters" />
+      <module name="search" options="-parameters" />
       <module name="user" options="-parameters" />
       <module name="users" options="-parameters" />
     </option>

@@ -1,7 +1,6 @@
-package socialtaal.profiles.models;
+package socialtaal.users.models;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,17 +11,10 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-@Entity(name = "Profiles")
 public class Profile {
 
-
-    @Id
     private String pseudo;
-
-    @Column
     private String biography;
-
-    @Column
-    private boolean contactable = false;
+    private boolean contactable;
 
 }
