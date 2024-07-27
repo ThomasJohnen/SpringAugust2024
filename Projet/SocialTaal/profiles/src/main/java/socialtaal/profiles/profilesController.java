@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import socialtaal.profiles.models.Profile;
 
+import java.util.List;
+
 @RestController
 public class profilesController {
 
@@ -23,6 +25,15 @@ public class profilesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(profile, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<List<Profile>> getAllProfiles(){
+        List<Profile> profiles = service.getAllProfiles();
+        if(profiles == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(profiles, HttpStatus.OK);
     }
 
 

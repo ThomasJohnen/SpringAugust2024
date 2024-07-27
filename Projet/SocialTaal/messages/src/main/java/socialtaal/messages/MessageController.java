@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import socialtaal.messages.models.Messages;
+import socialtaal.messages.models.Message;
 
 @Controller
 public class MessageController {
@@ -18,8 +18,8 @@ public class MessageController {
     }
 
     @PostMapping("/messages")
-    public ResponseEntity<Messages> addMessage(@RequestBody Messages message) {
-        if(message == null || message.g) {
+    public ResponseEntity<Message> addMessage(@RequestBody Message message) {
+        if(message == null || message.getMessage() == null || message.getSenderPseudo() == null || message.getReceiverPseudo() == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Message savedMessage = messageService.save(message);

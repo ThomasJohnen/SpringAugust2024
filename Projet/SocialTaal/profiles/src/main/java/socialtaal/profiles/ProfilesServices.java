@@ -5,12 +5,21 @@ import socialtaal.profiles.models.Profile;
 import socialtaal.profiles.models.User;
 import socialtaal.profiles.repository.ProfilesRepository;
 
+import java.awt.event.ItemEvent;
+import java.util.List;
+import java.util.stream.StreamSupport;
+
 @Service
 public class ProfilesServices {
     private final ProfilesRepository repository;
 
     public ProfilesServices(ProfilesRepository aNewrepository) {
         this.repository = aNewrepository;
+    }
+
+    public List<Profile> getAllProfiles() {
+        Iterable<Profile> listProfile = repository.findAll();
+        return StreamSupport.stream(listProfile.spliterator(), false).toList();
     }
 
     public Profile getProfile(String pseudo) {

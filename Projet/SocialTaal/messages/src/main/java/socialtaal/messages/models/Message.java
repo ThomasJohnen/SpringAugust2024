@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity(name = "messages")
-public class Messages {
+public class Message {
 
     @Id
     @Column
