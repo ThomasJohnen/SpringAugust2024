@@ -11,6 +11,7 @@
         <option value="$PROJECT_DIR$/authentication/pom.xml" />
         <option value="$PROJECT_DIR$/profiles/pom.xml" />
         <option value="$PROJECT_DIR$/search/pom.xml" />
+        <option value="$PROJECT_DIR$/Contacts/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

@@ -24,8 +24,33 @@ paths:
           description: Contact request sent
         '400':
           description: Something get wrong
-
-  /contacts/{contactId}:
+  /contacts/{senderId}/{stateContact}:
+    get:
+      summary: Get contacts by senderId and status
+      parameters:
+        - name: senderId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: stateContact
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [active, closed]
+      responses:
+        '200':
+          description: Contacts found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+        '404':
+          description: Contacts not found
+  /contacts/{senderId}/{receiverId}:
     patch:
       summary: Update contact status
       parameters:
@@ -43,7 +68,7 @@ paths:
               properties:
                 status:
                   type: string
-                  enum: [pending, active, closed]
+                  enum: [active, closed]
       responses:
         '200':
           description: Contact status updated
@@ -54,8 +79,6 @@ components:
     Contact:
       type: object
       properties:
-        id:
-          type: string
         senderId:
           type: string
         receiverId:
