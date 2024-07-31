@@ -14,12 +14,4 @@ GET http://localhost:9004/getList/Thomas/PENDING
 GET http://localhost:9004/Thomas/Lara
 
 ###
-PATCH http://localhost:9004/Thomas/Lara
-Content-Type: application/json
-
-{
-  "status": "ACCEPTED"
-}
-
-###
-GET http://localhost:9004/contacts
+PATCH http://localhost:9004/Thomas/Lara/ACTIVE

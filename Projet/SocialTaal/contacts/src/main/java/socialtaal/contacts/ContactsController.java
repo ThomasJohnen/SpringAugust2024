@@ -25,7 +25,6 @@ public class ContactsController {
 
     @PostMapping("/contact")
     public ResponseEntity<Contact> addContact(@RequestBody ContactRequest contactRequest) {
-        System.out.println("On est dans la méthode addContact");
         if(contactRequest.getSenderPseudo().equals(contactRequest.getReceiverPseudo()) || usersProxy.getUser(contactRequest.getSenderPseudo()) == null || usersProxy.getUser(contactRequest.getReceiverPseudo()) == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -49,6 +48,7 @@ public class ContactsController {
 
     @GetMapping("/{senderPseudo}/{receiverPseudo}")
     public ResponseEntity<Contact> getContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo) {
+        System.out.println("On est dans la méthode getContact");
         Contact contact = service.getContact(senderPseudo, receiverPseudo);
         if (contact == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -56,24 +56,16 @@ public class ContactsController {
         return new ResponseEntity<>(contact, HttpStatus.OK);
     }
 
-    @PatchMapping("/{senderPseudo}/{receiverPseudo}")
-    public ResponseEntity<Contact> modifyContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @RequestBody Contact.ContactType status) {
-        Contact contact = service.getContact(senderPseudo, receiverPseudo);
-        if (contact == null) {
+    @PatchMapping("/{senderPseudo}/{receiverPseudo}/{status}")
+    public ResponseEntity<Contact> modifyContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @PathVariable String status) {
+        System.out.println("senderPseudo: " + senderPseudo + " stateContact: " + status);
+        Contact contactModified = service.updateContact(senderPseudo, receiverPseudo, status);
+        if (contactModified == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Contact contactModified = service.updateContact(senderPseudo, receiverPseudo, status);
+
         return new ResponseEntity<>(contactModified, HttpStatus.OK);
 
     }
 
-    // to Remove, just for testing
-    @GetMapping("/contacts")
-    public ResponseEntity<List<Contact>> getContacts() {
-        List<Contact> contacts = service.getAllContacts();
-        if (contacts == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(contacts, HttpStatus.OK);
-    }
 }

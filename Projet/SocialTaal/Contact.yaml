@@ -86,16 +86,15 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: string
-                  enum: [active, closed]
+        - status: status
+          in: requestBody
+          required: true
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [active, closed]
       responses:
         '200':
           description: Contact status updated
@@ -106,6 +105,8 @@ components:
     Contact:
       type: object
       properties:
+        idContact:
+          type: integer
         senderId:
           type: string
         receiverId:

@@ -10,22 +10,24 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-@IdClass(Contact.class)
 @Entity(name = "contacts")
-public class Contact implements Serializable {
+public class Contact{
 
     public enum ContactType {
         ACTIVE,
         CLOSED,
         PENDING
     }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-     @Id
-     @Column
+
+     @Column(nullable = false)
     private String senderPseudo;
 
-    @Id
-    @Column
+
+    @Column(nullable = false)
     private String receiverPseudo;
 
     @Enumerated(EnumType.STRING)
