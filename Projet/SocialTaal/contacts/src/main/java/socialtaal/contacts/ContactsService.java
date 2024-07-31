@@ -5,6 +5,7 @@ import socialtaal.contacts.models.Contact;
 import socialtaal.contacts.repository.ContactsRepository;
 
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ContactsService {
@@ -15,12 +16,28 @@ public class ContactsService {
         this.repository = aNewrepository;
     }
 
-    public List<Contact> getContacts(String senderPseudo, Contact.ContactType stateContact) {
-        if(stateContact.equals(Contact.ContactType.PENDING)) {
+    public List<Contact> getContacts(String senderPseudo, String stateContact) {
+        System.out.println("On est dans le service getContacts");
+        Contact.ContactType contactType;
+        try {
+             contactType = Contact.ContactType.valueOf(stateContact.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid stateContact value: " + stateContact);
+            return null;
+        }
+
+        if(contactType == Contact.ContactType.PENDING) {
+            System.out.println("On essaie d'avoir la liste PENDING");
             return repository.findBySenderPseudoAndStatus(senderPseudo, Contact.ContactType.PENDING);
-        } else if( stateContact.equals(Contact.ContactType.ACTIVE))
+        } else if( contactType == Contact.ContactType.ACTIVE) {
+            System.out.println("On essaie d'avoir la liste ACIVE");
             return repository.findBySenderPseudoAndStatus(senderPseudo, Contact.ContactType.ACTIVE);
-        else return null;
+        }
+
+        else {
+            System.out.println("C'est la merde");
+            return null;
+        }
 
     }
     public Contact getContact(String senderPseudo, String receiverPseudo) {
@@ -42,5 +59,10 @@ public class ContactsService {
             contact.setStatus(Contact.ContactType.CLOSED);
         contact.setStatus(status);
         return save(contact);
+    }
+
+    public List<Contact> getAllContacts() {
+        Iterable<Contact> allContacts = repository.findAll();
+        return StreamSupport.stream(allContacts.spliterator(), false).toList();
     }
 }

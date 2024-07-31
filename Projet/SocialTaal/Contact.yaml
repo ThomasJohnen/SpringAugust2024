@@ -51,10 +51,37 @@ paths:
         '404':
           description: Contacts not found
   /contacts/{senderId}/{receiverId}:
+    get:
+      summary: Get contact by senderId and receiverId
+      parameters:
+        - name: senderId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: receiverId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contact found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '404':
+          description: Contact not found
     patch:
       summary: Update contact status
       parameters:
         - name: contactId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: receiverId
           in: path
           required: true
           schema:

@@ -36,6 +36,7 @@ public class UsersServices {
         User userToDelete = repository.findById(pseudo).orElse(null);
         if(userToDelete == null) return false;
         userToDelete.setDisable(true);
+        repository.save(userToDelete);
         return true;
     }
 

@@ -1,17 +1,18 @@
 package socialtaal.contacts.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
+@IdClass(Contact.class)
 @Entity(name = "contacts")
-public class Contact {
+public class Contact implements Serializable {
 
     public enum ContactType {
         ACTIVE,
@@ -27,6 +28,7 @@ public class Contact {
     @Column
     private String receiverPseudo;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ContactType status;
 

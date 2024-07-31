@@ -39,7 +39,7 @@ public class profilesController {
 
     @PostMapping("/profile/{pseudo}")
     public ResponseEntity<Profile> createProfile(@PathVariable String pseudo, @RequestBody Profile profile){
-        if(pseudo == null || profile == null || pseudo.equals(profile.getPseudo())){
+        if(pseudo == null || profile == null || !pseudo.equals(profile.getPseudo())){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         if(service.getProfile(pseudo) != null){
@@ -51,7 +51,7 @@ public class profilesController {
 
     @PatchMapping("/profile/{pseudo}")
     public ResponseEntity<Profile> updateProfile(@PathVariable String pseudo, @RequestBody Profile profile){
-        if(pseudo == null || profile == null || pseudo.equals(profile.getPseudo())){
+        if(pseudo == null || profile == null || !pseudo.equals(profile.getPseudo())){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         if(service.getProfile(pseudo) == null){

@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import socialtaal.users.models.Profile;
 
 @Repository
-@FeignClient(name = "Profiles")
+@FeignClient(name = "profiles")
 public interface ProfileProxy {
 
-    @PostMapping("/profiles/{pseudo}")
+    @PostMapping("/profile/{pseudo}")
     ResponseEntity<Profile> createProfile(@PathVariable String pseudo, @RequestBody Profile profile);
 
     @DeleteMapping("/profile/{pseudo}")

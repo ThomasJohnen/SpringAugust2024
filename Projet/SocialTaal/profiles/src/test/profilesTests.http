@@ -1,0 +1,64 @@
+###
+POST http://localhost:9002/profile/Pierre
+Content-Type: application/json
+
+{
+  "pseudo": "Pierre",
+  "biography": "",
+  "contactable": true
+}
+
+###
+PATCH http://localhost:9002/profile/Pierre
+Content-Type: application/json
+
+{
+  "pseudo": "Pierre",
+  "biography": "I am a student at Vinci",
+  "contactable": false
+}
+
+<> 2024-07-29T111347.200.json
+<> 2024-07-29T111324.200.json
+<> 2024-07-29T111256.201.json
+
+###
+GET http://localhost:9002/profile
+
+<> 2024-07-29T111417.200.json
+<> 2024-07-29T111327.200.json
+<> 2024-07-29T111247.200.json
+
+###
+GET http://localhost:9002/profile/Thomas
+
+<> 2024-07-29T111047.200.json
+
+###
+PATCH http://localhost:9002/profile/Thomas
+Content-Type: application/json
+
+{
+  "pseudo": "Thomas",
+  "biography": "I am a student at Vinci",
+  "contactable": true
+}
+
+###
+GET http://localhost:9002/profile/Lara
+
+###
+DELETE http://localhost:9002/profile/Pierre
+
+###
+POST http://localhost:9002/profile/{{pseudo}}
+Content-Type: application/json
+
+{
+  "pseudo": "",
+  "biography": "",
+  "contactable": false
+}
+
+###
+GET http://localhost:9004/{{senderPseudo}}/{{stateContact}}}

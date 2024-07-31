@@ -45,15 +45,19 @@ public class UsersController {
         user.setBirthdate(userReceived.getBirthdate());
         user.setBirthCountry(userReceived.getBirthCountry());
         user.setMotherTongue(userReceived.getMotherTongue());
-        if(userReceived.isDisable() == true)
+        if(userReceived.isDisable())
             user.setDisable(true);
+        System.out.println("User created");
         User savedUser = service.createOne(user);
+        System.out.println("User saved");
         Profile profile = new Profile();
         profile.setPseudo(pseudo);
         profile.setBiography(userReceived.getBiography());
-        if(userReceived.isContactable() == true)
+        if(userReceived.isContactable())
             profile.setContactable(true);
+        System.out.println("Profile created");
         profileProxy.createProfile(profile.getPseudo(), profile);
+        System.out.println("Profile saved");
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 

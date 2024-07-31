@@ -6,11 +6,30 @@ Content-Type: application/json
   "pseudo": "Thomas",
   "gender": "MALE",
   "birthdate": "1993-08-01",
+  "birthCountry": "Belgium",
   "motherTongue": "French"
 }
 
+### create user
+POST http://localhost:9001/users/Lara
+Content-Type: application/json
+
+{
+  "pseudo": "Lara",
+  "gender": "FEMALE",
+  "birthdate": "1997-5-22",
+  "birthCountry": "Belgium",
+  "motherTongue": "French",
+  "biography": "I am a student at Vinci",
+    "contactable": true
+}
+
+
 ### get user
 GET http://localhost:9001/users/Thomas
+
+### get user
+GET http://localhost:9001/users/Lara
 
 
 ### delete user
