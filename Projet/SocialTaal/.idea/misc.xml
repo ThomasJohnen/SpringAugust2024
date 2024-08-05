@@ -13,6 +13,7 @@
         <option value="$PROJECT_DIR$/search/pom.xml" />
         <option value="$PROJECT_DIR$/Contacts/pom.xml" />
         <option value="$PROJECT_DIR$/messages/pom.xml" />
+        <option value="$PROJECT_DIR$/gateway/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

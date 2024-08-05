@@ -13,6 +13,7 @@
         <module name="messages" />
         <module name="users" />
         <module name="contacts" />
+        <module name="gateway" />
         <module name="authentication" />
       </profile>
     </annotationProcessing>
@@ -27,6 +28,7 @@
       <module name="authentication" options="-parameters" />
       <module name="contacts" options="-parameters" />
       <module name="eureka" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="messages" options="-parameters" />
       <module name="profiles" options="-parameters" />
       <module name="search" options="-parameters" />

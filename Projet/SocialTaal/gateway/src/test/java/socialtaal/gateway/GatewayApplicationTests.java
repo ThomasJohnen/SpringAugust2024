@@ -1,10 +1,10 @@
-package socialtaal.messages;
+package socialtaal.gateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MessageApplicationTests {
+class GatewayApplicationTests {
 
     @Test
     void contextLoads() {

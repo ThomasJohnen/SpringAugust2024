@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ContactRequest {
+public class  ContactRequest {
     private String senderPseudo;
     private String receiverPseudo;
 }

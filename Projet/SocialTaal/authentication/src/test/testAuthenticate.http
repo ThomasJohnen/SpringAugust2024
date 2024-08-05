@@ -1,0 +1,81 @@
+### Create Credentials : 200 et 409
+POST http://localhost:9001/authentication/user
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "user"
+}
+
+### Create Credentials : 400
+POST http://localhost:9001/authentication/user
+Content-Type: application/json
+
+{
+  "username": "user"
+}
+
+### Update Credentials : 200
+PUT http://localhost:9001/authentication/user
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "userupdated"
+}
+
+### Update Credentials : 404
+PUT http://localhost:9001/authentication/user
+Content-Type: application/json
+
+{
+  "username": "user2",
+  "password": "userupdated"
+}
+
+### Update Credentials : 400
+PUT http://localhost:9001/authentication/user
+Content-Type: application/json
+
+{
+  "username": "user2",
+  "password": "userupdated"
+}
+
+### Delete Credentials : 200
+DELETE http://localhost:9001/authentication/user
+
+### Delete Credentials : 404
+DELETE http://localhost:9001/authentication/user
+
+### Connect user : 200
+POST http://localhost:9001/authentication/connect
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "user"
+}
+
+### Connect user : 400
+POST http://localhost:9001/authentication/connect
+Content-Type: application/json
+
+{
+  "username": "user"
+}
+
+### Connect user : 200
+POST http://localhost:9001/authentication/connect
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "user1"
+}
+
+### Verify token
+POST http://localhost:9001/authentication/verify
+Content-Type: application/json
+
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoMCIsInBzZXVkbyI6IkNhdDRMaWZlIn0.bDhK9qAwQlbMH8J-ejVuthoX5pcwPvApTqv0L3volzwdglnlVtATVqnxqyyX-BcGs9A_VOIAB6r1R8oK3k66pw

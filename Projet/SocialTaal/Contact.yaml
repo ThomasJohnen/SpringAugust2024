@@ -3,7 +3,7 @@ info:
   title: Contact Service API
   version: 1.0.0
 servers:
-  - url http://localhost:9004
+  - url: http://localhost:9004
 paths:
   /contacts:
     post:
