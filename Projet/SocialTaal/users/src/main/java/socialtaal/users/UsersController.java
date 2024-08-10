@@ -7,24 +7,31 @@ import org.springframework.web.bind.annotation.*;
 import socialtaal.users.models.Profile;
 import socialtaal.users.models.User;
 import socialtaal.users.models.UserReceive;
-import socialtaal.users.repository.ProfileProxy;
 
 @RestController
 public class UsersController {
 
     private final UsersServices service;
-    private final ProfileProxy profileProxy;
 
-    public UsersController(UsersServices service, ProfileProxy profileProxy) {
+
+    public UsersController(UsersServices service) {
         this.service = service;
-        this.profileProxy = profileProxy;
     }
 
+    /**
+     * Get all users
+     * @return a list of all users
+     */
     @GetMapping("/users")
     public ResponseEntity<Iterable<User>> getUsers(){
         return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }
 
+    /**
+     * Get a user by pseudo
+     * @param pseudo the pseudo of the user
+     * @return the user if it exists, else return a 404 status
+     */
     @GetMapping("/users/{pseudo}")
     public ResponseEntity<User> getUser(@PathVariable String pseudo){
         User user = service.getUser(pseudo);
@@ -33,12 +40,16 @@ public class UsersController {
         else return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    /**
+     * Create a user
+     * @param pseudo the pseudo of the user
+     * @param userReceived the user to create
+     * @return the created user if it doesn't exist, else return a 409 status
+     */
     @PostMapping("/users/{pseudo}")
     public ResponseEntity<User> createUser(@PathVariable String pseudo, @RequestBody UserReceive userReceived){
         if(userReceived.getPseudo() == null || userReceived.getGender() == null || userReceived.getBirthdate() == null || userReceived.getBirthCountry() == null || userReceived.getMotherTongue() == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if(service.getUser(pseudo) != null)
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
         User user = new User();
         user.setPseudo(pseudo);
         user.setGender(userReceived.getGender());
@@ -47,27 +58,44 @@ public class UsersController {
         user.setMotherTongue(userReceived.getMotherTongue());
         if(userReceived.isDisable())
             user.setDisable(true);
-        System.out.println("User created");
-        User savedUser = service.createOne(user);
-        System.out.println("User saved");
-        Profile profile = new Profile();
-        profile.setPseudo(pseudo);
-        profile.setBiography(userReceived.getBiography());
         if(userReceived.isContactable())
-            profile.setContactable(true);
-        System.out.println("Profile created");
-        profileProxy.createProfile(profile.getPseudo(), profile);
-        System.out.println("Profile saved");
+            user.setContactable(true);
+        if(userReceived.getBiography() == null)
+            user.setBiography("");
+        else user.setBiography(userReceived.getBiography());
+        User savedUser = service.createOne(user);
+        if(savedUser == null)
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
+    /**
+     * Delete a user
+     * @param pseudo the pseudo of the user to delete
+     * @return a 200 status if the user is deleted, else return a 404 status
+     */
     @DeleteMapping("/users/{pseudo}")
     public ResponseEntity<User> deleteUser(@PathVariable String pseudo){
         if(service.getUser(pseudo) == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         service.deleteUser(pseudo);
-        profileProxy.deleteProfile(pseudo);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Update a user
+     * @param pseudo the pseudo of the user to update
+     * @param profileToUpdate the profile to update
+     * @return the updated user if it exists, else return a 404 status
+     */
+    @PatchMapping("/users/{pseudo}")
+    public ResponseEntity<User> updateUser(@PathVariable String pseudo, @RequestBody Profile profileToUpdate){
+       if(pseudo == null || profileToUpdate.getBiography() == null)
+           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+       User user = service.modifyUser(pseudo, profileToUpdate);
+       if(user == null)
+           return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+       return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 }

@@ -9,7 +9,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="search" />
         <module name="eureka" />
-        <module name="profiles" />
         <module name="messages" />
         <module name="users" />
         <module name="contacts" />
@@ -19,6 +18,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Eureka" target="17" />
+      <module name="profiles" target="17" />
       <module name="user" target="17" />
     </bytecodeTargetLevel>
   </component>

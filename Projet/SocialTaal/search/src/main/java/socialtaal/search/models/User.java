@@ -1,8 +1,6 @@
-package socialtaal.profiles.models;
+package socialtaal.search.models;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,17 +10,26 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-@Entity(name = "Profiles")
-public class Profile {
+public class User {
 
+    public enum Gender {
+        MALE,
+        FEMALE;
+    }
 
-    @Id
     private String pseudo;
 
-    @Column
+    private Gender gender;
+
+    private String birthdate;
+
+    private String birthCountry;
+
+    private String motherTongue;
+
+    private boolean disable = false;
+
     private String biography;
 
-    @Column
     private boolean contactable = false;
-
 }

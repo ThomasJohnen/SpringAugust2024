@@ -16,6 +16,12 @@ public class ContactsService {
         this.repository = aNewrepository;
     }
 
+    /**
+     * Get all contacts of a user
+     * @param senderPseudo the pseudo of the sender
+     * @param stateContact the state of the contact
+     * @return a list of all contacts
+     */
     public List<Contact> getContacts(String senderPseudo, String stateContact) {
         Contact.ContactType contactType;
         try {
@@ -36,6 +42,13 @@ public class ContactsService {
         }
 
     }
+
+    /**
+     * Get a contact with the sender and receiver pseudo
+     * @param senderPseudo
+     * @param receiverPseudo
+     * @return
+     */
     public Contact getContact(String senderPseudo, String receiverPseudo) {
         Contact contactGetted = repository.findBySenderPseudoAndReceiverPseudo(senderPseudo, receiverPseudo);
         if (contactGetted == null) {
@@ -44,6 +57,11 @@ public class ContactsService {
         return contactGetted;
     }
 
+    /**
+     * Save a contact
+     * @param contact
+     * @return the saved contact
+     */
     public Contact save(Contact contact) {
         return repository.save(contact);
     }
@@ -69,6 +87,10 @@ public class ContactsService {
         return save(contact);
     }
 
+    /**
+     * Get all contacts
+     * @return a list of all contacts
+     */
     public List<Contact> getAllContacts() {
         Iterable<Contact> allContacts = repository.findAll();
         return StreamSupport.stream(allContacts.spliterator(), false).toList();

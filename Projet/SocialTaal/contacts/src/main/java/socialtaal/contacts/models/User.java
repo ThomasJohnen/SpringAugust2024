@@ -1,5 +1,6 @@
 package socialtaal.contacts.models;
 
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,4 +28,8 @@ public class User {
     private String motherTongue;
 
     private boolean disable = false;
+
+    private String biography;
+
+    private boolean contactable = false;
 }

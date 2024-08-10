@@ -4,9 +4,14 @@ package socialtaal.messages;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import socialtaal.messages.models.Message;
+import socialtaal.messages.models.MessagePosted;
+
+import java.util.List;
 
 @Controller
 public class MessageController {
@@ -17,12 +22,36 @@ public class MessageController {
         this.messageService = messageService;
     }
 
+    /**
+     * Add a message to the database
+     * @param message the message to add
+     * @return the added message
+     */
     @PostMapping("/messages")
-    public ResponseEntity<Message> addMessage(@RequestBody Message message) {
+    public ResponseEntity<Message> addMessage(@RequestBody MessagePosted message) {
+        System.out.println("Message received: " + message);
         if(message == null || message.getMessage() == null || message.getSenderPseudo() == null || message.getReceiverPseudo() == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Message savedMessage = messageService.save(message);
+        System.out.println("message to post in creation");
+        Message messageToPost = new Message();
+        messageToPost.setMessage(message.getMessage());
+        messageToPost.setSenderPseudo(message.getSenderPseudo());
+        messageToPost.setReceiverPseudo(message.getReceiverPseudo());
+        messageToPost.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        System.out.println("message created");
+        Message savedMessage = messageService.save(messageToPost);
         return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
+    }
+
+    /**
+     * Get all messages for a given pseudo
+     * @param pseudo
+     * @return the list of messages
+     */
+    @GetMapping("/messages/{pseudo}")
+    public ResponseEntity<List<Message>> getMessages(@PathVariable String pseudo) {
+        List<Message> messages = messageService.getMessages(pseudo);
+        return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 }

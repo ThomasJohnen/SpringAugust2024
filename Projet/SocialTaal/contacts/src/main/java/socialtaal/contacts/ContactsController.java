@@ -23,6 +23,11 @@ public class ContactsController {
         this.usersProxy = aNewusersProxy;
     }
 
+    /**
+     * Add a contact
+     * @param contactRequest the contact to add with the sender and receiver pseudo
+     * @return the created contact if it doesn't exist, else return a 400 status
+     */
     @PostMapping("/contact")
     public ResponseEntity<Contact> addContact(@RequestBody ContactRequest contactRequest) {
         if(contactRequest.getSenderPseudo().equals(contactRequest.getReceiverPseudo()) || usersProxy.getUser(contactRequest.getSenderPseudo()) == null || usersProxy.getUser(contactRequest.getReceiverPseudo()) == null){
@@ -36,6 +41,12 @@ public class ContactsController {
         return new ResponseEntity<>(savedContact, HttpStatus.CREATED);
     }
 
+    /**
+     * Get all contacts
+     * @param senderPseudo the pseudo of the sender
+     * @param stateContact the state of the contact
+     * @return a list of all contacts
+     */
     @GetMapping("/getList/{senderPseudo}/{stateContact}")
     public ResponseEntity<List<Contact>> getContacts(@PathVariable String senderPseudo, @PathVariable String stateContact) {
         System.out.println("senderPseudo: " + senderPseudo + " stateContact: " + stateContact);
@@ -46,6 +57,12 @@ public class ContactsController {
         return new ResponseEntity<>(contacts, HttpStatus.OK);
     }
 
+    /**
+     * Get a contact by sender and receiver pseudo
+     * @param senderPseudo the pseudo of the sender
+     * @param receiverPseudo the pseudo of the receiver
+     * @return the contact if it exists, else return a 404 status
+     */
     @GetMapping("/{senderPseudo}/{receiverPseudo}")
     public ResponseEntity<Contact> getContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo) {
         System.out.println("On est dans la méthode getContact");
@@ -56,6 +73,13 @@ public class ContactsController {
         return new ResponseEntity<>(contact, HttpStatus.OK);
     }
 
+    /**
+     * Modify a contact
+     * @param senderPseudo the pseudo of the sender
+     * @param receiverPseudo the pseudo of the receiver
+     * @param status the state of the contact
+     * @return the modified contact if it exists, else return a 404 status
+     */
     @PatchMapping("/{senderPseudo}/{receiverPseudo}/{status}")
     public ResponseEntity<Contact> modifyContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @PathVariable String status) {
         System.out.println("senderPseudo: " + senderPseudo + " stateContact: " + status);

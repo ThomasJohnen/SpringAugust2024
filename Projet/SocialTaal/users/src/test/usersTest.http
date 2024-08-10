@@ -7,7 +7,8 @@ Content-Type: application/json
   "gender": "MALE",
   "birthdate": "1993-08-01",
   "birthCountry": "Belgium",
-  "motherTongue": "French"
+  "motherTongue": "French",
+  "contactable": false
 }
 
 ### create user
@@ -21,8 +22,18 @@ Content-Type: application/json
   "birthCountry": "Belgium",
   "motherTongue": "French",
   "biography": "I am a student at Vinci",
+  "contactable": true
+}
+
+### update user
+PATCH http://localhost:9001/users/Thomas
+Content-Type: application/json
+
+{
+  "biography": "I am a student at Vinci",
     "contactable": true
 }
+
 
 
 ### get user

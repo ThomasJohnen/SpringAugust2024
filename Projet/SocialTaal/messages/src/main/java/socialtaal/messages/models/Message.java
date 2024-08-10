@@ -1,9 +1,6 @@
 package socialtaal.messages.models;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,21 +8,23 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity(name = "messages")
+@Entity(name = "message")
 public class Message {
 
     @Id
-    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false, nullable = false)
+    private Long id;
+
+    @Column(nullable = false)
     private String senderPseudo;
 
-    @Id
-    @Column
+    @Column(nullable = false)
     private String receiverPseudo;
 
-    @Column
+    @Column(nullable = false)
     private String message;
 
-    @Column
+    @Column(nullable = false)
     private String timestamp;
-
 }

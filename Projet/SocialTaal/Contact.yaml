@@ -5,7 +5,7 @@ info:
 servers:
   - url: http://localhost:9004
 paths:
-  /contacts:
+  /contact:
     post:
       summary: Send a contact request
       requestBody:
@@ -24,7 +24,7 @@ paths:
           description: Contact request sent
         '400':
           description: Something get wrong
-  /contacts/{senderId}/{stateContact}:
+  /getList/{senderId}/{stateContact}:
     get:
       summary: Get contacts by senderId and status
       parameters:
@@ -50,7 +50,7 @@ paths:
                   $ref: '#/components/schemas/Contact'
         '404':
           description: Contacts not found
-  /contacts/{senderId}/{receiverId}:
+  /{senderId}/{receiverId}:
     get:
       summary: Get contact by senderId and receiverId
       parameters:
@@ -73,6 +73,7 @@ paths:
                 $ref: '#/components/schemas/Contact'
         '404':
           description: Contact not found
+  /{senderId}/{receiverId}/{status}:
     patch:
       summary: Update contact status
       parameters:

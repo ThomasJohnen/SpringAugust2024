@@ -34,5 +34,11 @@ public class User {
     @Column (nullable = false)
     private boolean disable = false;
 
+    @Column
+    private String biography;
+
+    @Column
+    private boolean contactable = false;
+
 
 }

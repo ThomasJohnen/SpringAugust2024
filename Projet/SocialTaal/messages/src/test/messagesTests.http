@@ -1,0 +1,63 @@
+### create a message
+POST http://localhost:9005/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Thomas",
+  "receiverPseudo": "Lara",
+  "message": "Hello Lara, how are you?"
+}
+
+### create a message
+POST http://localhost:9005/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Lara",
+  "receiverPseudo": "Thomas",
+  "message": "Hello Thomas, I am fine, thank you. And you?"
+}
+
+### create a message
+POST http://localhost:9005/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Thomas",
+  "receiverPseudo": "Lara",
+  "message": "I am fine too, thank you. What are you doing?"
+}
+
+### create a message
+POST http://localhost:9005/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Lara",
+  "receiverPseudo": "Thomas",
+  "message": "I am studying for my exams. And you?"
+}
+
+### create a message
+POST http://localhost:9005/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Thomas",
+  "receiverPseudo": "Lara",
+  "message": "I am working on my project. Do you want to meet?"
+}
+
+### create a message
+POST http://localhost:9005/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Lara",
+  "receiverPseudo": "Thomas",
+  "message": "Yes, I would like to meet you. When?"
+}
+
+
+### get all messages for a user
+GET http://localhost:9005/messages/Lara

@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface ContactsRepository extends CrudRepository<Contact, Integer> {
 
-    //@Query("SELECT c FROM contacts c WHERE c.senderPseudo = :senderPseudo AND c.status = :status")
+    @Query("SELECT c FROM contacts c WHERE (c.senderPseudo = :senderPseudo OR c.receiverPseudo= :senderPseudo) AND c.status = :status")
     List<Contact> findBySenderPseudoAndStatus(String senderPseudo, Contact.ContactType status);
 
     @Query("SELECT c FROM contacts c WHERE (c.senderPseudo = :senderPseudo AND c.receiverPseudo = :receiverPseudo) OR (c.senderPseudo = :receiverPseudo AND c.receiverPseudo = :senderPseudo)")
