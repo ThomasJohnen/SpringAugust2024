@@ -1,4 +1,4 @@
-package socialtaal.search.models;
+package socialtaal.gateway.models;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

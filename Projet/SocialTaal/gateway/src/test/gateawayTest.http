@@ -1,0 +1,378 @@
+#### Register a new user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "pseudo": "Thomas",
+  "gender": "MALE",
+  "birthdate": "1993-08-01",
+  "birthCountry": "Belgium",
+  "motherTongue": "French",
+  "contactable": false,
+  "password": "123456"
+}
+
+#### Connect a user
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+"pseudo": "Thomas",
+"password": "123456"
+}
+
+
+#### Register a new user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "pseudo": "Lara",
+  "gender": "FEMALE",
+  "birthdate": "1997-5-22",
+  "birthCountry": "Belgium",
+  "motherTongue": "French",
+  "biography": "I am a student at Vinci",
+  "contactable": true,
+  "password": "MotDePasseTest"
+}
+
+#### Register a new user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "pseudo": "Mélanie",
+  "gender": "FEMALE",
+  "birthdate": "1985-6-12",
+  "birthCountry": "Belgium",
+  "motherTongue": "French",
+  "biography": "I am a student at Vinci",
+  "contactable": true,
+  "password": "MotDePasseTest"
+}
+
+#### Register a new user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+"pseudo": "Lucas",
+"gender": "MALE",
+"birthdate": "1990-03-15",
+"birthCountry": "France",
+"motherTongue": "French",
+"biography": "Passionate about technology and travel",
+"contactable": true,
+"password": "Password123"
+}
+
+#### Register a new user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+"pseudo": "Sophie",
+"gender": "FEMALE",
+"birthdate": "1988-12-01",
+"birthCountry": "Canada",
+"motherTongue": "French",
+"biography": "Graphic designer and art lover",
+"contactable": false,
+"password": "Artistic2021"
+}
+
+#### Register a new user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+"pseudo": "Maxime",
+"gender": "MALE",
+"birthdate": "1995-04-18",
+"birthCountry": "Switzerland",
+"motherTongue": "French",
+"biography": "Outdoor enthusiast and photographer",
+"contactable": true,
+"password": "OutdoorLife95"
+}
+
+#### Register a new user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+"pseudo": "Elodie",
+"gender": "FEMALE",
+"birthdate": "1992-09-25",
+"birthCountry": "Luxembourg",
+"motherTongue": "French",
+"biography": "Music teacher and singer",
+"contactable": true,
+"password": "MusicLover92"
+}
+
+#### Register a new user
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+"pseudo": "Julien",
+"gender": "MALE",
+"birthdate": "1987-11-30",
+"birthCountry": "Belgium",
+"motherTongue": "French",
+"biography": "Chef and culinary explorer",
+"contactable": false,
+"password": "CulinaryPassion87"
+}
+
+### update user
+PATCH http://localhost:9001/users/Mélanie
+Content-Type: application/json
+
+{
+  "biography": "I am a student at Vinci",
+  "contactable": true
+}
+
+### update user
+PATCH http://localhost:9001/users/Thomas
+Content-Type: application/json
+
+{
+  "biography": "I am a student at IPL",
+  "contactable": true
+}
+
+#### Get a user
+GET http://localhost:8080/users/Thomas
+
+#### Get all users
+GET http://localhost:8080/users
+
+
+### Create a message which fails because the sender is not a contact of the receiver
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Thomas",
+  "receiverPseudo": "Lara",
+  "message": "Hello Lara, how are you?"
+}
+
+### Create a contact request
+POST http://localhost:8080/contact
+Content-Type: application/json
+
+{
+  "senderPseudo": "Lara",
+  "receiverPseudo": "Thomas"
+}
+
+
+### Get list of pending contact requests for a user
+GET http://localhost:8080/getList/Lara/PENDING
+
+### Change contact status to ACTIVE
+PATCH http://localhost:8080/Thomas/Lara/ACTIVE
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Lara",
+  "receiverPseudo": "Thomas",
+  "message": "Hello Thomas, I am fine, thank you. And you?"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Thomas",
+  "receiverPseudo": "Lara",
+  "message": "I am fine too, thank you. What are you doing?"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Lara",
+  "receiverPseudo": "Thomas",
+  "message": "I am studying for my exams. And you?"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Thomas",
+  "receiverPseudo": "Lara",
+  "message": "I am working on my project. Do you want to meet?"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Lara",
+  "receiverPseudo": "Thomas",
+  "message": "Yes, I would like to meet you. When?"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Lucas",
+  "receiverPseudo": "Sophie",
+  "message": "Hey Sophie, long time no see! How have you been?"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Sophie",
+  "receiverPseudo": "Lucas",
+  "message": "Hi Lucas! I've been great, thanks for asking. What about you?"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Maxime",
+  "receiverPseudo": "Elodie",
+  "message": "Hello Elodie, are you free this weekend for a hiking trip?"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Elodie",
+  "receiverPseudo": "Maxime",
+  "message": "Hi Maxime! That sounds amazing, count me in!"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Julien",
+  "receiverPseudo": "Mélanie",
+  "message": "Hello Mélanie, I found a new recipe I'd like to try. Would you like to join?"
+}
+
+### Create a message
+POST http://localhost:8080/messages
+Content-Type: application/json
+
+{
+  "senderPseudo": "Mélanie",
+  "receiverPseudo": "Julien",
+  "message": "Hi Julien! That sounds delicious, I'd love to!"
+}
+
+### Get all messages for a user
+GET http://localhost:8080/messages/Lara
+
+### Get all messages for a user
+GET http://localhost:8080/messages/Lucas
+
+###
+POST http://localhost:8080/contact
+Content-Type: application/json
+
+{
+  "senderPseudo": "Thomas",
+  "receiverPseudo": "Lara"
+}
+
+###
+GET http://localhost:8080/getList/Thomas/PENDING
+
+###
+GET http://localhost:8080/Lara/Thomas
+
+###
+GET http://localhost:8080/Thomas/Lara
+
+
+###
+PATCH http://localhost:8080/Thomas/Lara/ACTIVE
+
+
+### Create a contact request
+POST http://localhost:8080/contact
+Content-Type: application/json
+
+{
+  "senderPseudo": "Lara",
+  "receiverPseudo": "Sophie"
+}
+
+### Create a contact request
+POST http://localhost:8080/contact
+Content-Type: application/json
+
+{
+  "senderPseudo": "Sophie",
+  "receiverPseudo": "Maxime"
+}
+
+### Create a contact request
+POST http://localhost:8080/contact
+Content-Type: application/json
+
+{
+  "senderPseudo": "Maxime",
+  "receiverPseudo": "Elodie"
+}
+
+### Create a contact request
+POST http://localhost:8080/contact
+Content-Type: application/json
+
+{
+  "senderPseudo": "Elodie",
+  "receiverPseudo": "Julien"
+}
+
+### Create a contact request
+POST http://localhost:8080/contact
+Content-Type: application/json
+
+{
+  "senderPseudo": "Julien",
+  "receiverPseudo": "Lucas"
+}
+
+### Get list of pending contact requests for a user
+GET http://localhost:8080/getList/Lara/PENDING
+
+### Get contact status between two users
+GET http://localhost:8080/Sophie/Maxime
+
+### Get contact status between two users
+GET http://localhost:8080/Maxime/Elodie
+
+### Update contact status to ACTIVE
+PATCH http://localhost:8080/Sophie/Maxime/ACTIVE
+
+### Update contact status to ACTIVE
+PATCH http://localhost:8080/Maxime/Elodie/ACTIVE

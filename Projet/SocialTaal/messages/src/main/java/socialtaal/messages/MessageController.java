@@ -29,18 +29,18 @@ public class MessageController {
      */
     @PostMapping("/messages")
     public ResponseEntity<Message> addMessage(@RequestBody MessagePosted message) {
-        System.out.println("Message received: " + message);
         if(message == null || message.getMessage() == null || message.getSenderPseudo() == null || message.getReceiverPseudo() == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        System.out.println("message to post in creation");
         Message messageToPost = new Message();
         messageToPost.setMessage(message.getMessage());
         messageToPost.setSenderPseudo(message.getSenderPseudo());
         messageToPost.setReceiverPseudo(message.getReceiverPseudo());
         messageToPost.setTimestamp(String.valueOf(System.currentTimeMillis()));
-        System.out.println("message created");
         Message savedMessage = messageService.save(messageToPost);
+        if(savedMessage == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
     }
 
@@ -51,7 +51,11 @@ public class MessageController {
      */
     @GetMapping("/messages/{pseudo}")
     public ResponseEntity<List<Message>> getMessages(@PathVariable String pseudo) {
+
         List<Message> messages = messageService.getMessages(pseudo);
+        if(messages == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 }

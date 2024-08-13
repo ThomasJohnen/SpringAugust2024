@@ -1,8 +1,5 @@
 package socialtaal.gateway.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.*;
 
 @Getter
@@ -12,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Credentials {
 
-    private String username;
+    private String pseudo;
 
-    private String hashedPassword;
+    private String password;
 }

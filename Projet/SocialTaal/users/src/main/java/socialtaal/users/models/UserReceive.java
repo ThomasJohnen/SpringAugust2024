@@ -27,4 +27,6 @@ public class UserReceive {
     private String biography;
 
     private boolean contactable;
+
+    private String password;
 }

@@ -1,5 +1,5 @@
 ### create user
-POST http://localhost:9001/users/Thomas
+POST http://localhost:9001/users
 Content-Type: application/json
 
 {
@@ -8,11 +8,12 @@ Content-Type: application/json
   "birthdate": "1993-08-01",
   "birthCountry": "Belgium",
   "motherTongue": "French",
-  "contactable": false
+  "contactable": false,
+  "password": "123456"
 }
 
 ### create user
-POST http://localhost:9001/users/Lara
+POST http://localhost:9001/users
 Content-Type: application/json
 
 {
@@ -22,7 +23,8 @@ Content-Type: application/json
   "birthCountry": "Belgium",
   "motherTongue": "French",
   "biography": "I am a student at Vinci",
-  "contactable": true
+  "contactable": true,
+  "password": "MotDePasseTest"
 }
 
 ### update user

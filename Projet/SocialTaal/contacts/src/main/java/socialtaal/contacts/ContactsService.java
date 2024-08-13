@@ -2,7 +2,9 @@ package socialtaal.contacts;
 
 import org.springframework.stereotype.Service;
 import socialtaal.contacts.models.Contact;
+import socialtaal.contacts.models.ContactRequest;
 import socialtaal.contacts.repository.ContactsRepository;
+import socialtaal.contacts.repository.UsersProxy;
 
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -11,8 +13,10 @@ import java.util.stream.StreamSupport;
 public class ContactsService {
 
     private final ContactsRepository repository;
+    private final UsersProxy usersProxy;
 
-    public ContactsService(ContactsRepository aNewrepository) {
+    public ContactsService(ContactsRepository aNewrepository, UsersProxy usersProxy) {
+        this.usersProxy = usersProxy;
         this.repository = aNewrepository;
     }
 
@@ -62,13 +66,18 @@ public class ContactsService {
      * @param contact
      * @return the saved contact
      */
-    public Contact save(Contact contact) {
-        return repository.save(contact);
+    public Contact save(ContactRequest contact) {
+        if( usersProxy.getUser(contact.getReceiverPseudo()) == null || usersProxy.getUser(contact.getSenderPseudo()) == null)
+            return null;
+        Contact newContact = new Contact();
+        newContact.setSenderPseudo(contact.getSenderPseudo());
+        newContact.setReceiverPseudo(contact.getReceiverPseudo());
+        newContact.setStatus(Contact.ContactType.PENDING);
+        return repository.save(newContact);
     }
 
     public Contact updateContact(String senderPseudo, String receiverPseudo, String status) {
         Contact contact = getContact(senderPseudo, receiverPseudo);
-        System.out.println("On est dans la méthode updateContact du service et le user vaut : " + contact);
         if (contact == null) {
             return null;
         }
@@ -84,7 +93,7 @@ public class ContactsService {
             contact.setStatus(Contact.ContactType.ACTIVE);
         else
             contact.setStatus(Contact.ContactType.CLOSED);
-        return save(contact);
+        return repository.save(contact);
     }
 
     /**

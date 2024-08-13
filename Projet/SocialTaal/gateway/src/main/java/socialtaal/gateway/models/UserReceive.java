@@ -1,4 +1,4 @@
-package socialtaal.search.models;
+package socialtaal.gateway.models;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,16 +9,12 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-public class User {
+public class UserReceive {
 
-    public enum Gender {
-        MALE,
-        FEMALE;
-    }
 
     private String pseudo;
 
-    private Gender gender;
+    private Genders gender;
 
     private String birthdate;
 
@@ -30,5 +26,7 @@ public class User {
 
     private String biography;
 
-    private boolean contactable = false;
+    private boolean contactable;
+
+    private String password;
 }

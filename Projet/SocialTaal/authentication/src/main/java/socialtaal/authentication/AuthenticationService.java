@@ -29,10 +29,10 @@ public class AuthenticationService {
      * @return The JWT token, or null if the user couldn't be connected
      */
     public String connect(UnsafeCredentials unsafeCredentials) {
-        SafeCredentials safeCredentials = repository.findById(unsafeCredentials.getUsername()).orElse(null);
+        SafeCredentials safeCredentials = repository.findById(unsafeCredentials.getPseudo()).orElse(null);
         if (safeCredentials == null) return null;
         if (!BCrypt.checkpw(unsafeCredentials.getPassword(), safeCredentials.getHashedPassword())) return null;
-        return JWT.create().withIssuer("auth0").withClaim("username", safeCredentials.getUsername()).sign(jwtAlgorithm);
+        return JWT.create().withIssuer("auth0").withClaim("pseudo", safeCredentials.getPseudo()).sign(jwtAlgorithm);
     }
 
 
@@ -43,7 +43,7 @@ public class AuthenticationService {
      */
     public String verify(String token) {
         try {
-            String pseudo = jwtVerifier.verify(token).getClaim("username").asString();
+            String pseudo = jwtVerifier.verify(token).getClaim("pseudo").asString();
             if (!repository.existsById(pseudo)) return null;
             return pseudo;
         } catch (JWTVerificationException e) {
@@ -58,7 +58,7 @@ public class AuthenticationService {
      * @return True if the credentials were created, or false if they already exist
      */
     public boolean createOne(UnsafeCredentials unsafeCredentials) {
-        if (repository.existsById(unsafeCredentials.getUsername())) return false;
+        if (repository.existsById(unsafeCredentials.getPseudo())) return false;
         String hashedPassword = BCrypt.hashpw(unsafeCredentials.getPassword(), BCrypt.gensalt());
         repository.save(unsafeCredentials.makeSafe(hashedPassword));
         return true;
@@ -70,7 +70,7 @@ public class AuthenticationService {
      * @return True if the credentials were updated, or false if they couldn't be found
      */
     public boolean updateOne(UnsafeCredentials unsafeCredentials) {
-        if (!repository.existsById(unsafeCredentials.getUsername())) return false;
+        if (!repository.existsById(unsafeCredentials.getPseudo())) return false;
         String hashedPassword = BCrypt.hashpw(unsafeCredentials.getPassword(), BCrypt.gensalt());
         repository.save(unsafeCredentials.makeSafe(hashedPassword));
         return true;

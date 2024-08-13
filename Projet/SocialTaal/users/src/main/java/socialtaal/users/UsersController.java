@@ -8,6 +8,8 @@ import socialtaal.users.models.Profile;
 import socialtaal.users.models.User;
 import socialtaal.users.models.UserReceive;
 
+import java.util.List;
+
 @RestController
 public class UsersController {
 
@@ -23,7 +25,7 @@ public class UsersController {
      * @return a list of all users
      */
     @GetMapping("/users")
-    public ResponseEntity<Iterable<User>> getUsers(){
+    public ResponseEntity<List<User>> getUsers(){
         return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }
 
@@ -42,28 +44,15 @@ public class UsersController {
 
     /**
      * Create a user
-     * @param pseudo the pseudo of the user
      * @param userReceived the user to create
      * @return the created user if it doesn't exist, else return a 409 status
      */
-    @PostMapping("/users/{pseudo}")
-    public ResponseEntity<User> createUser(@PathVariable String pseudo, @RequestBody UserReceive userReceived){
-        if(userReceived.getPseudo() == null || userReceived.getGender() == null || userReceived.getBirthdate() == null || userReceived.getBirthCountry() == null || userReceived.getMotherTongue() == null)
+    @PostMapping("/users")
+    public ResponseEntity<User> createUser( @RequestBody UserReceive userReceived){
+        System.out.println("On passe dans la méthode createUser");
+        if(userReceived.getPseudo() == null || userReceived.getGender() == null || userReceived.getBirthdate() == null || userReceived.getBirthCountry() == null || userReceived.getMotherTongue() == null || userReceived.getPassword() == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        User user = new User();
-        user.setPseudo(pseudo);
-        user.setGender(userReceived.getGender());
-        user.setBirthdate(userReceived.getBirthdate());
-        user.setBirthCountry(userReceived.getBirthCountry());
-        user.setMotherTongue(userReceived.getMotherTongue());
-        if(userReceived.isDisable())
-            user.setDisable(true);
-        if(userReceived.isContactable())
-            user.setContactable(true);
-        if(userReceived.getBiography() == null)
-            user.setBiography("");
-        else user.setBiography(userReceived.getBiography());
-        User savedUser = service.createOne(user);
+        User savedUser = service.createOne(userReceived);
         if(savedUser == null)
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);

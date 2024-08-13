@@ -35,9 +35,9 @@ public class AuthenticationController {
     }
 
     /**
-     * Verify a token and return the username
+     * Verify a token and return the pseudopseudo
      * @param token the token to verify
-     * @return the username
+     * @return the pseudo
      * - HttpStatus.UNAUTHORIZED if the token is not valid
      * - HttpStatus.OK if the token is valid
      */
@@ -51,16 +51,16 @@ public class AuthenticationController {
 
     /**
      * Create a new user
-     * @param username the username of the user to create
+     * @param pseudo the pseudo of the user to create
      * @param credentials the credentials of the user to create
      * @return void
      * - HttpStatus.BAD_REQUEST if the credentials are not valid
      * - HttpStatus.CONFLICT if the user already exists
      * - HttpStatus.CREATED if the user is successfully created
      */
-    @PostMapping("/authentication/{username}")
-    public ResponseEntity<Void> createOne(@PathVariable String username, @RequestBody UnsafeCredentials credentials) {
-        if (!Objects.equals(credentials.getUsername(), username)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @PostMapping("/authentication/{pseudo}")
+    public ResponseEntity<Void> createOne(@PathVariable String pseudo, @RequestBody UnsafeCredentials credentials) {
+        if (!credentials.getPseudo().equals(pseudo)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if (credentials.invalid()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         boolean created = service.createOne(credentials);
@@ -71,16 +71,17 @@ public class AuthenticationController {
 
     /**
      * Update a user
-     * @param username the username of the user to update
+     * @param pseudo the pseudo of the user to update
      * @param credentials the credentials of the user to update
      * @return void
      * - HttpStatus.BAD_REQUEST if the credentials are not valid
      * - HttpStatus.NOT_FOUND if the user is not found
      * - HttpStatus.OK if the user is successfully updated
      */
-    @PutMapping("/authentication/{username}")
-    public ResponseEntity<Void> updateOne(@PathVariable String username, @RequestBody UnsafeCredentials credentials) {
-        if (!Objects.equals(credentials.getUsername(), username)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @PutMapping("/authentication/{pseudo}")
+    public ResponseEntity<Void> updateOne(@PathVariable String pseudo, @RequestBody UnsafeCredentials credentials) {
+        System.out.println("On arrive au bon endroit");
+        if (!Objects.equals(pseudo, credentials.getPseudo())) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if (credentials.invalid()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         boolean found = service.updateOne(credentials);
@@ -91,14 +92,14 @@ public class AuthenticationController {
 
     /**
      * Delete a user
-     * @param username the username of the user to delete
+     * @param pseudo the username of the user to delete
      * @return void
      * - HttpStatus.NOT_FOUND if the user is not found
      * - HttpStatus.OK if the user is successfully deleted
      */
-    @DeleteMapping("/authentication/{username}")
-    public ResponseEntity<Void> deleteCredentials(@PathVariable String username) {
-        boolean found = service.deleteOne(username);
+    @DeleteMapping("/authentication/{pseudo}")
+    public ResponseEntity<Void> deleteCredentials(@PathVariable String pseudo) {
+        boolean found = service.deleteOne(pseudo);
 
         if (!found) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         else return new ResponseEntity<>(HttpStatus.OK);

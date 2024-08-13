@@ -8,14 +8,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class UnsafeCredentials {
-    private String username;
+    private String pseudo;
     private String password;
 
     public SafeCredentials makeSafe(String hashedPassword) {
-        return new SafeCredentials(username, hashedPassword);
+        return new SafeCredentials(pseudo, hashedPassword);
     }
 
     public boolean invalid() {
-        return username == null || username.isBlank() || password == null || password.isBlank();
+        return pseudo == null || pseudo.isBlank() || password == null || password.isBlank();
     }
 }
