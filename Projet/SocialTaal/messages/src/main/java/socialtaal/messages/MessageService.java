@@ -1,6 +1,7 @@
 package socialtaal.messages;
 
 import org.springframework.stereotype.Service;
+import socialtaal.messages.models.Contact;
 import socialtaal.messages.models.Message;
 import socialtaal.messages.repository.ContactProxy;
 import socialtaal.messages.repository.MessageRepository;
@@ -29,9 +30,10 @@ public class MessageService {
      * @return
      */
     public Message save(Message messageEchange) {
-        if(contactProxy.getContact(messageEchange.getSenderPseudo(), messageEchange.getReceiverPseudo()).getBody() != null){
-            return messageRepository.save(messageEchange);
-        } return null;
+        Contact contact = contactProxy.getContact(messageEchange.getSenderPseudo(), messageEchange.getReceiverPseudo()).getBody();
+        if( contact == null || contact.getStatus() != Contact.ContactType.ACTIVE){
+            return null;
+        } return messageRepository.save(messageEchange);
 
     }
 

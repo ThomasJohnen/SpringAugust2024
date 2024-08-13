@@ -67,7 +67,7 @@ public class ContactsService {
      * @return the saved contact
      */
     public Contact save(ContactRequest contact) {
-        if( usersProxy.getUser(contact.getReceiverPseudo()) == null || usersProxy.getUser(contact.getSenderPseudo()) == null)
+        if( usersProxy.getUser(contact.getReceiverPseudo()) == null || usersProxy.getUser(contact.getSenderPseudo()) == null )
             return null;
         Contact newContact = new Contact();
         newContact.setSenderPseudo(contact.getSenderPseudo());
