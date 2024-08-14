@@ -138,7 +138,9 @@ public class GatewayService {
     }
 
     public Contact updateContact(String senderPseudo, String receiverPseudo, String status) throws NotFoundException {
+        System.out.println("On est dans la suite de l'appel, dans la partie service");
         try {
+            System.out.println("on tente d'appeler le proxy");
             return contactProxy.modifyContact(senderPseudo, receiverPseudo, status).getBody();
         } catch (FeignException e) {
             if (e.status() == 404) throw new NotFoundException();

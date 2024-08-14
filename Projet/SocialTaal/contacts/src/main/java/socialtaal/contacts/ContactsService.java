@@ -77,6 +77,7 @@ public class ContactsService {
     }
 
     public Contact updateContact(String senderPseudo, String receiverPseudo, String status) {
+        System.out.println("On est passé dans le ContactsService");
         Contact contact = getContact(senderPseudo, receiverPseudo);
         if (contact == null) {
             return null;

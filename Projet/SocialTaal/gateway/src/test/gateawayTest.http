@@ -376,3 +376,36 @@ PATCH http://localhost:8080/Sophie/Maxime/ACTIVE
 
 ### Update contact status to ACTIVE
 PATCH http://localhost:8080/Maxime/Elodie/ACTIVE
+
+
+
+
+
+
+
+
+
+### search users by gender
+GET http://localhost:9003/search/Thomas?gender=FEMALE
+
+### search users by birth country
+GET http://localhost:9003/search/Lara?birthCountry=Belgium
+
+### search users by mother tongue
+GET http://localhost:9003/search/Thomas?motherTongue=French
+
+### search users with minimum age of 25
+GET http://localhost:9003/search/Thomas?minAge=25
+
+### search users with maximum age of 30
+GET http://localhost:9003/search/Thomas?maxAge=30
+
+### search users between ages 25 and 30
+GET http://localhost:9003/search/Thomas?minAge=25&maxAge=30
+
+### search users by gender and birth country
+GET http://localhost:9003/search/Thomas?gender=FEMALE&birthCountry=Belgium
+
+### search users by gender, age range, and mother tongue
+GET http://localhost:9003/search/Thomas?gender=MALE&minAge=25&maxAge=30&motherTongue=French
+

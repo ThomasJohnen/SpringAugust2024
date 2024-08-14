@@ -213,6 +213,7 @@ public class GatewayController {
      */
     @PatchMapping("/{senderPseudo}/{receiverPseudo}/{status}")
     public ResponseEntity<Contact> modifyContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @PathVariable String status) {
+        System.out.println("On rentre dans la méthode  modifyContact du GatewayController");
         if(senderPseudo == null || receiverPseudo == null || status == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

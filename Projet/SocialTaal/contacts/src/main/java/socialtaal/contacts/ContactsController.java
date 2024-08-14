@@ -79,6 +79,7 @@ public class ContactsController {
      */
     @PatchMapping("/{senderPseudo}/{receiverPseudo}/{status}")
     public ResponseEntity<Contact> modifyContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @PathVariable String status) {
+        System.out.println("L'appel à correctement été fait");
         Contact contactModified = service.updateContact(senderPseudo, receiverPseudo, status);
         if (contactModified == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
