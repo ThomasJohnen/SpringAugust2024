@@ -1,33 +1,25 @@
 openapi: 3.0.0
 info:
   title: User Service
+  description: The purpose of this service is to manage the users of the application.
+    **Note:** When creating a User, a POST request will be sent to the Authentication microservice to create credentials.
+
   version: 1.0.0
 servers:
   - url: http://localhost:9001
 paths:
   /users:
     post:
+      description: This endpoint allows the creation of a new user in the database. It will also create credentials in the Authentication microservice.
+        All fields are required except for `contactable`, which is optional, and `biography`, which is not mandatory.
       summary: Create a new user account
       requestBody:
+        description: A `UserReceive` object is expected as input
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                gender:
-                  type: string
-                birthdate:
-                  type: string
-                  format: date
-                country:
-                  type: string
-                language:
-                  type: string
+              $ref: '#/components/schemas/UserReceive'
       responses:
         '201':
           description: User created
@@ -36,6 +28,7 @@ paths:
         '409':
           description: User already exists
     get:
+      description: This endpoint allows retrieving a list of all users in the application.
       summary: Get a list of all users
       responses:
         '200':
@@ -46,12 +39,34 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-  /users/{userId}:
+    put:
+      description: This endpoint allows updating an existing user in the database, but only fields related to a "profile."
+      summary: Update an existing user
+      requestBody:
+        description: A `Profile` object is expected as input
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: User can't be updated
+        '404':
+          description: User not found
+  /users/{pseudo}:
     get:
       summary: Get user by ID
       parameters:
-        - name: userId
+        - name: pseudo
           in: path
+          description: Pseudo of the user to retrieve
           required: true
           schema:
             type: string
@@ -63,40 +78,142 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '404':
-          description: user not found
+          description: User not found
     delete:
-      summary: Delete user by ID
+      summary: Delete user by pseudo (sets the `disable` field to true)
       parameters:
-        - name: userId
+        - name: pseudo
           in: path
+          description: Pseudo of the user to delete
           required: true
           schema:
             type: string
       responses:
-        '204':
+        '200':
           description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '400':
           description: User can't be deleted
 
 components:
   schemas:
-    User:
+    Gender:
+      description: The user's gender
+      type: string
+      enum:
+        - MALE
+        - FEMALE
+    Profile:
+      type: object
+      properties:
+        biography:
+          description: The user's biography
+          type: string
+        contactable:
+          description: Can the user be contacted by other users? Default is false.
+          type: boolean
+      required:
+        - biography
+        - contactable
+      example:
+        biography: I am a developer passionate about new technologies
+        contactable: false
+    UserReceive:
       type: object
       properties:
         pseudo:
+          description: The user's pseudo, which serves as their identifier.
           type: string
         gender:
+          description: The user's gender (see #/components/schemas/Gender)
           type: string
           enum:
             - MALE
             - FEMALE
         birthdate:
+          description: The user's date of birth
           type: string
           format: date
         birthCountry:
+          description: The user's country of birth
           type: string
         motherTongue:
+          description: The user's mother tongue
           type: string
         disable:
+          description: Is the user disabled (corresponds to Delete if true)? Default is false.
           type: boolean
+        biography:
+          description: The user's biography; this field is not mandatory at creation
+          type: string
+        contactable:
+          description: Can the user be contacted by other users? Default is false.
+          type: boolean
+        password:
+          description: The user's password
+          type: string
+      required:
+        - pseudo
+        - gender
+        - birthdate
+        - birthCountry
+        - motherTongue
+        - password
+      example:
+        pseudo: Thomas
+        gender: MALE
+        birthdate: 1993-08-01
+        birthCountry: Belgium
+        motherTongue: French
+        biography: I am a developer passionate about new technologies
+        contactable: false
+        password: 123456
 
+    User:
+      type: object
+      properties:
+        pseudo:
+          description: The user's pseudo, which serves as their identifier.
+          type: string
+        gender:
+          description: The user's gender
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+        birthdate:
+          description: The user's date of birth
+          type: string
+          format: date
+        birthCountry:
+          description: The user's country of birth
+          type: string
+        motherTongue:
+          description: The user's mother tongue
+          type: string
+        disable:
+          description: Is the user disabled (corresponds to Delete if true)? Default is false.
+          type: boolean
+        biography:
+          description: The user's biography; this field is not mandatory at creation
+          type: string
+        contactable:
+          description: Can the user be contacted by other users? Default is false.
+          type: boolean
+      required:
+        - pseudo
+        - gender
+        - birthdate
+        - birthCountry
+        - motherTongue
+      example:
+        pseudo: Thomas
+        gender: MALE
+        birthdate: 1993-08-01
+        birthCountry: Belgium
+        motherTongue: French
+        biography: I am a developer passionate about new technologies
+        contactable: false

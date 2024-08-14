@@ -1,6 +1,7 @@
 openapi: 3.0.0
 info:
   title: Message Service
+  description: This service manages sending and retrieving messages between users.
   version: 1.0.0
 servers:
   - url: http://localhost:9005
@@ -8,30 +9,33 @@ paths:
   /messages:
     post:
       summary: Send a message
+      description: This endpoint allows sending a message from one user to another.
       requestBody:
+        description: A MessagePosted object is expected as input.
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                senderId:
-                  type: string
-                receiverId:
-                  type: string
-                content:
-                  type: string
+              $ref: '#/components/schemas/MessagePosted'
       responses:
         '201':
           description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
         '400':
-          description: Message not send
-  /messages/{contactId}:
+          description: Error in sending the message
+        '404':
+          description: User not found
+  /messages/{pseudo}:
     get:
-      summary: Get messages by contact ID
+      summary: Retrieve a user's messages
+      description: This endpoint allows retrieving all messages sent or received by a user.
       parameters:
-        - name: contactId
+        - name: pseudo
           in: path
+          description: The pseudo of the user whose messages are to be retrieved
           required: true
           schema:
             type: string
@@ -45,20 +49,61 @@ paths:
                 items:
                   $ref: '#/components/schemas/Message'
         '404':
-          description: not found
+          description: No messages found for this user
+
 components:
   schemas:
+    MessagePosted:
+      type: object
+      description: Represents a message to be sent
+      properties:
+        senderPseudo:
+          type: string
+          description: The pseudo of the user sending the message
+        receiverPseudo:
+          type: string
+          description: The pseudo of the user receiving the message
+        message:
+          type: string
+          description: The content of the message
+      required:
+        - senderPseudo
+        - receiverPseudo
+        - message
+      example:
+        senderPseudo: Alice
+        receiverPseudo: Bob
+        message: Hi Bob, how are you?
+
     Message:
       type: object
+      description: Represents a message in the system
       properties:
         id:
+          type: integer
+          description: The unique identifier of the message
+        senderPseudo:
           type: string
-        senderId:
+          description: The pseudo of the user who sent the message
+        receiverPseudo:
           type: string
-        receiverId:
+          description: The pseudo of the user who received the message
+        message:
           type: string
-        content:
-          type: string
+          description: The content of the message
         timestamp:
           type: string
           format: date-time
+          description: The timestamp of when the message was sent
+      required:
+        - id
+        - senderPseudo
+        - receiverPseudo
+        - message
+        - timestamp
+      example:
+        id: 1
+        senderPseudo: Alice
+        receiverPseudo: Bob
+        message: Hi Bob, how are you?
+        timestamp: 2024-08-14T10:15:30Z
