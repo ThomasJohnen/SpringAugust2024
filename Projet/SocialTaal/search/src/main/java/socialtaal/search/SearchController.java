@@ -53,7 +53,6 @@ public class SearchController {
                     isGenderRight = true;
             }
             if(!isGenderRight) {
-                System.out.println("issue with gender");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         }

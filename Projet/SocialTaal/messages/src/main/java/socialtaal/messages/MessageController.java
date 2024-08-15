@@ -30,9 +30,7 @@ public class MessageController {
      */
     @PostMapping("/messages")
     public ResponseEntity<Message> addMessage(@RequestBody MessagePosted message) {
-        System.out.println("Adding message");
         if(message == null || message.getMessage() == null || message.getSenderPseudo() == null || message.getReceiverPseudo() == null){
-            System.out.println("bad request qui renvoie 404 ?");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

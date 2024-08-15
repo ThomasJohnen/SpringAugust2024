@@ -32,7 +32,6 @@ public class ContactsService {
         try {
              contactType = Contact.ContactType.valueOf(stateContact.toUpperCase());
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid stateContact value: " + stateContact);
             return null;
         }
 
@@ -86,7 +85,7 @@ public class ContactsService {
         try {
             contactType = Contact.ContactType.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid stateContact value: " + status);
+
             return null;
         }
         if(contactType == Contact.ContactType.ACTIVE)

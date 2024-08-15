@@ -56,15 +56,11 @@ public class MessageService {
         try {
             return contactProxy.getContact(senderPseudo, receiverPseudo);
         } catch (FeignException.Unauthorized e) {
-            System.out.println("Unauthorized access: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (FeignException.NotFound e) {
-            System.out.println("Contact not found: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         catch (FeignException e) {
-            // Gérer les autres erreurs
-            System.out.println("Other error: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
