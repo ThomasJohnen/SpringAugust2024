@@ -46,6 +46,8 @@ paths:
           description: Bad request - The provided contact data is incorrect.
         '401':
             description: Unauthorized - The sender pseudo or the receiver pseudo does not match a user contactable.
+        '409':
+            description: Conflict - The contact already exists.
 
   /getList/{senderPseudo}:
     get:

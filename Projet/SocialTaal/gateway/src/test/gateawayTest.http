@@ -150,6 +150,12 @@ GET http://localhost:8080/users/Thomas
 #### Get all users
 GET http://localhost:8080/users
 
+#### Delete a user
+DELETE http://localhost:8080/users/Julien
+
+#### verifier la suppression
+GET http://localhost:8080/users/Julien
+
 
 ### Create a message which fails because the sender is not a contact of the receiver (401)
 POST http://localhost:8080/messages
