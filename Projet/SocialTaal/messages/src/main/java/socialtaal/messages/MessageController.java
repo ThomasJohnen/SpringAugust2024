@@ -35,25 +35,27 @@ public class MessageController {
             System.out.println("bad request qui renvoie 404 ?");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        ResponseEntity<Contact> contact = messageService.getContact(message.getSenderPseudo(), message.getReceiverPseudo());
-        System.out.println("Point 1");
-        if(contact.getBody() == null ||  !contact.getBody().getStatus().toString().equals("ACTIVE")){
-            System.out.println("Contact not found");
+
+
+        ResponseEntity<Contact> contactResponse = messageService.getContact(message.getSenderPseudo(), message.getReceiverPseudo());
+
+        if (contactResponse.getStatusCode() == HttpStatus.UNAUTHORIZED) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        System.out.println("Point 2");
+
+        if (contactResponse.getBody() == null || !contactResponse.getBody().getStatus().toString().equals("ACTIVE")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         Message messageToPost = new Message();
         messageToPost.setMessage(message.getMessage());
         messageToPost.setSenderPseudo(message.getSenderPseudo());
         messageToPost.setReceiverPseudo(message.getReceiverPseudo());
         messageToPost.setTimestamp(String.valueOf(System.currentTimeMillis()));
         Message savedMessage = messageService.save(messageToPost);
-        System.out.println("Point 3");
         if(savedMessage == null){
-            System.out.println("wrong place");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        System.out.println("Point 4");
         return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
     }
 

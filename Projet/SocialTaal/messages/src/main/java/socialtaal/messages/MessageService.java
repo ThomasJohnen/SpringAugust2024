@@ -1,5 +1,7 @@
 package socialtaal.messages;
 
+import feign.FeignException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import socialtaal.messages.models.Contact;
@@ -50,7 +52,20 @@ public class MessageService {
         return usersProxy.getUser(pseudo);
     }
 
-    public ResponseEntity<Contact> getContact(String senderPseudo, String receiverPseudo){
-        return contactProxy.getContact(senderPseudo, receiverPseudo);
+    public ResponseEntity<Contact> getContact(String senderPseudo, String receiverPseudo) {
+        try {
+            return contactProxy.getContact(senderPseudo, receiverPseudo);
+        } catch (FeignException.Unauthorized e) {
+            System.out.println("Unauthorized access: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (FeignException.NotFound e) {
+            System.out.println("Contact not found: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        catch (FeignException e) {
+            // Gérer les autres erreurs
+            System.out.println("Other error: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
