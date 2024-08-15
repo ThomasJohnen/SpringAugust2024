@@ -2,116 +2,253 @@ openapi: 3.0.0
 info:
   title: Contact Service API
   version: 1.0.0
+  description: |
+    API for managing contact requests between users.
+    This service allows users to send, receive, and manage contact requests with other users.
+    This service works in conjunction with the User Service to ensure that contact requests are sent to valid users.
+
 servers:
   - url: http://localhost:9004
+    description: Local server for development
+
 paths:
   /contact:
     post:
       summary: Send a contact request
+      description: Creates a new contact request between two users identified by their pseudonyms.
       requestBody:
         required: true
+        description: The information needed to create a contact request.
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                senderId:
-                  type: string
-                receiverId:
-                  type: string
+              $ref: '#/components/schemas/ContactRequest'
+            examples:
+              Example:
+                value:
+                  senderPseudo: user1
+                  receiverPseudo: user2
       responses:
         '201':
-          description: Contact request sent
+          description: Contact request sent successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+              examples:
+                Example1:
+                  value:
+                    id: 1
+                    senderPseudo: user1
+                    receiverPseudo: user2
+                    status: PENDING
         '400':
-          description: Something get wrong
-  /getList/{senderId}/{stateContact}:
+          description: Bad request - The provided contact data is incorrect.
+        '401':
+            description: Unauthorized - The sender pseudo or the receiver pseudo does not match a user contactable.
+
+  /getList/{senderPseudo}:
     get:
-      summary: Get contacts by senderId and status
+      summary: Get all contacts by sender pseudo
+      description: Retrieves a list of all contacts for a given user regardless of the contact's status.
       parameters:
-        - name: senderId
+        - name: senderPseudo
           in: path
           required: true
+          description: The pseudo of the user who sent the contact requests.
           schema:
             type: string
-        - name: stateContact
-          in: path
-          required: true
-          schema:
-            type: string
-            enum: [active, closed]
       responses:
         '200':
-          description: Contacts found
+          description: Contacts list retrieved successfully.
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Contact'
+              examples:
+                Example:
+                  value:
+                    - id: 1
+                      senderPseudo: user1
+                      receiverPseudo: user2
+                      status: ACTIVE
+                    - id: 2
+                      senderPseudo: user1
+                      receiverPseudo: user3
+                      status: CLOSED
         '404':
-          description: Contacts not found
-  /{senderId}/{receiverId}:
+          description: No contacts found for the provided pseudo.
+        '400':
+          description: Bad request - The provided pseudo is incorrect.
+
+  /getList/{senderPseudo}/{stateContact}:
     get:
-      summary: Get contact by senderId and receiverId
+      summary: Get contacts by sender pseudo and status
+      description: Retrieves a list of contacts for a given sender based on the contact's status (active or closed).
       parameters:
-        - name: senderId
+        - name: senderPseudo
           in: path
           required: true
+          description: The pseudo of the user who sent the contact requests.
           schema:
             type: string
-        - name: receiverId
+        - name: stateContact
           in: path
           required: true
+          description: The status of the contact to filter by (active or closed).
+          schema:
+            type: string
+            enum: [ACTIVE, CLOSED]
+      responses:
+        '200':
+          description: Contacts list retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+              example:
+                  value:
+                    - id: 1
+                      senderPseudo: user1
+                      receiverPseudo: user2
+                      status: ACTIVE
+                    - id: 2
+                      senderPseudo: user1
+                      receiverPseudo: user3
+                      status: CLOSED
+        '404':
+          description: No contacts found matching the criteria.
+        '400':
+            description: Bad request - The provided status is incorrect. **NOTE** That we don't check the pseudo  because it's matching with another method.
+
+  /{senderPseudo}/{receiverPseudo}:
+    get:
+      summary: Get contact by sender and receiver pseudonyms
+      description: Retrieves the information of a specific contact between a sender and a receiver identified by their pseudonyms.
+      parameters:
+        - name: senderPseudo
+          in: path
+          required: true
+          description: The pseudo of the user who sent the contact request.
+          schema:
+            type: string
+        - name: receiverPseudo
+          in: path
+          required: true
+          description: The pseudo of the user who received the contact request.
           schema:
             type: string
       responses:
         '200':
-          description: Contact found
+          description: Contact found successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Contact'
+              examples:
+                Example1:
+                  value:
+                    id: 1
+                    senderPseudo: user1
+                    receiverPseudo: user2
+                    status: ACTIVE
         '404':
-          description: Contact not found
-  /{senderId}/{receiverId}/{status}:
+          description: No contact found for the provided pseudonyms.
+        '400':
+          description: Bad request - One or All of The provided pseudo are incorrect.
+
+  /{senderPseudo}/{receiverPseudo}/{status}:
     patch:
       summary: Update contact status
+      description: Updates the status of an existing contact between a sender and a receiver identified by their pseudonyms.
       parameters:
-        - name: contactId
+        - name: senderPseudo
           in: path
           required: true
+          description: The pseudo of the user who sent the contact request.
           schema:
             type: string
-        - name: receiverId
+        - name: receiverPseudo
           in: path
           required: true
+          description: The pseudo of the user who received the contact request.
           schema:
             type: string
-        - status: status
-          in: requestBody
+        - name: status
+          in: path
           required: true
+          description: The new status to assign to the contact (active or closed).
           schema:
-            type: object
-            properties:
-              status:
-                type: string
-                enum: [active, closed]
+            type: string
+            enum: [ACTIVE, CLOSED]
       responses:
         '200':
-          description: Contact status updated
+          description: Contact status updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+              examples:
+                Example1:
+                  value:
+                    id: 1
+                    senderPseudo: user1
+                    receiverPseudo: user2
+                    status: CLOSED
+        '404':
+          description: No contact found for the provided pseudonyms.
         '400':
-          description: Something get wrong
+          description: Bad request - The provided status is incorrect. **NOTE** That we don't check the pseudo  because it's matching with another method.
+
 components:
   schemas:
     Contact:
       type: object
+      description: Representation of a contact relationship between two users.
       properties:
-        idContact:
+        id:
           type: integer
-        senderId:
+          description: Unique identifier of the contact.
+        senderPseudo:
           type: string
-        receiverId:
+          description: Pseudo of the user who initiated the contact.
+        receiverPseudo:
           type: string
+          description: Pseudo of the user who receives the contact request.
         status:
           type: string
-          enum: [pending, active, closed]
+          description: Current status of the contact.
+          enum: [PENDING, ACTIVE, CLOSED]
+      example:
+        Example1:
+          value:
+            id: 1
+            senderPseudo: Lara
+            receiverPseudo: Thomas
+            status: PENDING
+        Example2:
+          value:
+            id: 2
+            senderPseudo: Lara
+            receiverPseudo: Laura
+            status: ACTIVE
+
+    ContactRequest:
+      type: object
+      description: Information needed to create a contact request.
+      properties:
+        senderPseudo:
+          type: string
+          description: Pseudo of the user who sends the contact request.
+        receiverPseudo:
+          type: string
+          description: Pseudo of the user who receives the contact request.
+      example:
+        value:
+          senderPseudo: Harry
+          receiverPseudo: Ron
+

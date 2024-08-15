@@ -4,6 +4,7 @@ package socialtaal.users;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import socialtaal.users.models.Genders;
 import socialtaal.users.models.Profile;
 import socialtaal.users.models.User;
 import socialtaal.users.models.UserReceive;
@@ -26,7 +27,10 @@ public class UsersController {
      */
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers(){
-        return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
+        List<User> users= service.getAllUsers();
+        if(users.isEmpty())
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     /**
@@ -49,8 +53,14 @@ public class UsersController {
      */
     @PostMapping("/users")
     public ResponseEntity<User> createUser( @RequestBody UserReceive userReceived){
-        System.out.println("On passe dans la méthode createUser");
         if(userReceived.getPseudo() == null || userReceived.getGender() == null || userReceived.getBirthdate() == null || userReceived.getBirthCountry() == null || userReceived.getMotherTongue() == null || userReceived.getPassword() == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        boolean isGenderRight = false;
+        for (Object o : Genders.values()) {
+            if(o.equals(userReceived.getGender()))
+                isGenderRight = true;
+        }
+        if(!isGenderRight)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         User savedUser = service.createOne(userReceived);
         if(savedUser == null)
@@ -77,7 +87,7 @@ public class UsersController {
      * @param profileToUpdate the profile to update
      * @return the updated user if it exists, else return a 404 status
      */
-    @PatchMapping("/users/{pseudo}")
+    @PutMapping("/users/{pseudo}")
     public ResponseEntity<User> updateUser(@PathVariable String pseudo, @RequestBody Profile profileToUpdate){
        if(pseudo == null || profileToUpdate.getBiography() == null)
            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

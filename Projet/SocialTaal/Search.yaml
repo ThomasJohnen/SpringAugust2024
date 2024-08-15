@@ -2,59 +2,65 @@ openapi: 3.0.0
 info:
   title: Search Service
   version: 1.0.0
+  description:
+    The Search Service allows users to search for profiles within the application based on various criteria such as language, age, gender, and country.
+    This service is designed to help users find and connect with others who match their preferences or interests. The service returns a list of profiles
+    that meet the specified search parameters, making it easier to discover potential connections within the user base.
+
 servers:
   - url: http://localhost:9003
+
 paths:
   /search:
     get:
       summary: Search for profiles
+      description:
+        Search for user profiles based on various optional criteria such as language, age, gender, and country. 
+        The search returns a list of users who match the specified parameters.
       parameters:
         - name: language
           in: query
+          description: The language preference of the user profiles to search for.
           required: false
           schema:
             type: string
         - name: ageMin
           in: query
+          description: The minimum age of the user profiles to include in the search results.
           required: false
           schema:
             type: integer
         - name: ageMax
           in: query
+          description: The maximum age of the user profiles to include in the search results.
           required: false
           schema:
             type: integer
         - name: gender
           in: query
+          description: The gender of the user profiles to include in the search results.
           required: false
           schema:
             type: string
+            enum:
+              - MALE
+              - FEMALE
         - name: country
           in: query
+          description: The country of the user profiles to include in the search results.
           required: false
           schema:
             type: string
       responses:
         '200':
-          description: A list of matching profiles
+          description: A list of matching User SSS
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Profile'
+                  $ref: 'User.yaml#/components/schemas/User'
         '400':
-          description: Something get wrong
-components:
-  schemas:
-    Profile:
-      type: object
-      properties:
-        userId:
-          type: string
-        biography:
-          type: string
-        interests:
-          type: string
-        contactable:
-          type: boolean
+          description: Bad Request, the user is probably missing or doesn't exist, or the gender is not in the database
+        '404':
+          description: There is not users in the database on which the search can be made

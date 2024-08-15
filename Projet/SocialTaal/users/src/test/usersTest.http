@@ -28,7 +28,7 @@ Content-Type: application/json
 }
 
 ### update user
-PATCH http://localhost:9001/users/Thomas
+PUT http://localhost:9001/users/Thomas
 Content-Type: application/json
 
 {

@@ -1,3 +1,4 @@
+
 #### Register a new user
 POST http://localhost:8080/users
 Content-Type: application/json
@@ -12,7 +13,7 @@ Content-Type: application/json
   "password": "123456"
 }
 
-#### Connect a user
+#### Connect the user "Thomas"
 POST http://localhost:8080/authentication/connect
 Content-Type: application/json
 
@@ -20,6 +21,8 @@ Content-Type: application/json
 "pseudo": "Thomas",
 "password": "123456"
 }
+
+> {% client.global.set("token", response.body) %}
 
 
 #### Register a new user
@@ -127,23 +130,19 @@ Content-Type: application/json
 "password": "CulinaryPassion87"
 }
 
-### update user
-PATCH http://localhost:9001/users/Mélanie
-Content-Type: application/json
 
-{
-  "biography": "I am a student at Vinci",
-  "contactable": true
-}
 
-### update user
-PATCH http://localhost:9001/users/Thomas
+### update user to make it contactable
+PUT http://localhost:8080/users/Thomas
+Authorization: {{token}}
 Content-Type: application/json
 
 {
   "biography": "I am a student at IPL",
   "contactable": true
 }
+
+
 
 #### Get a user
 GET http://localhost:8080/users/Thomas
@@ -154,6 +153,7 @@ GET http://localhost:8080/users
 
 ### Create a message which fails because the sender is not a contact of the receiver
 POST http://localhost:8080/messages
+Authorization: {{token}}
 Content-Type: application/json
 
 {
@@ -164,23 +164,52 @@ Content-Type: application/json
 
 ### Create a contact request
 POST http://localhost:8080/contact
+Authorization: {{token}}
 Content-Type: application/json
 
 {
-  "senderPseudo": "Lara",
-  "receiverPseudo": "Thomas"
+  "senderPseudo": "Thomas",
+  "receiverPseudo": "Lara"
 }
 
-
 ### Get list of pending contact requests for a user
-GET http://localhost:8080/getList/Lara/PENDING
+GET http://localhost:8080/getList/Thomas/PENDING
+Authorization: {{token}}
+
+### Get a contact between two users
+GET http://localhost:8080/Lara/Thomas
+Authorization: {{token}}
+
+### verify the oposite of the previous request works
+GET http://localhost:8080/Thomas/Lara
+Authorization: {{token}}
 
 ### Change contact status to ACTIVE
-PATCH http://localhost:8080/Thomas/Lara/ACTIVE
+PUT http://localhost:8080/Thomas/Lara/ACTIVE
+Authorization: {{token}}
+
+
+
+#### Connect the user "Lara"
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+  "pseudo": "Lara",
+  "password": "MotDePasseTest"
+}
+
+> {% client.global.set("token", response.body) %}
+
+### Get list of pending contact requests for a user
+GET http://localhost:8080/getList/Lara/ACTIVE
+Authorization: {{token}}
 
 ### Create a message
 POST http://localhost:8080/messages
+Authorization: {{token}}
 Content-Type: application/json
+
 
 {
   "senderPseudo": "Lara",
@@ -188,8 +217,21 @@ Content-Type: application/json
   "message": "Hello Thomas, I am fine, thank you. And you?"
 }
 
+#### Connect the user "Thomas"
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+  "pseudo": "Thomas",
+  "password": "123456"
+}
+
+> {% client.global.set("token", response.body) %}
+
+
 ### Create a message
 POST http://localhost:8080/messages
+Authorization: {{token}}
 Content-Type: application/json
 
 {
@@ -198,8 +240,20 @@ Content-Type: application/json
   "message": "I am fine too, thank you. What are you doing?"
 }
 
+#### Connect the user "Lara"
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+  "pseudo": "Lara",
+  "password": "MotDePasseTest"
+}
+
+> {% client.global.set("token", response.body) %}
+
 ### Create a message
 POST http://localhost:8080/messages
+Authorization: {{token}}
 Content-Type: application/json
 
 {
@@ -208,8 +262,20 @@ Content-Type: application/json
   "message": "I am studying for my exams. And you?"
 }
 
+#### Connect the user "Thomas"
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+  "pseudo": "Thomas",
+  "password": "123456"
+}
+
+> {% client.global.set("token", response.body) %}
+
 ### Create a message
 POST http://localhost:8080/messages
+Authorization: {{token}}
 Content-Type: application/json
 
 {
@@ -218,8 +284,20 @@ Content-Type: application/json
   "message": "I am working on my project. Do you want to meet?"
 }
 
+#### Connect the user "Lara"
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+  "pseudo": "Lara",
+  "password": "MotDePasseTest"
+}
+
+> {% client.global.set("token", response.body) %}
+
 ### Create a message
 POST http://localhost:8080/messages
+Authorization: {{token}}
 Content-Type: application/json
 
 {
@@ -228,74 +306,76 @@ Content-Type: application/json
   "message": "Yes, I would like to meet you. When?"
 }
 
-### Create a message
-POST http://localhost:8080/messages
+### Get all messages for a user
+GET http://localhost:8080/messages/Lara
+Authorization: {{token}}
+
+
+
+
+#### Connect the user "Elodie"
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+  "pseudo": "Elodie",
+  "password": "MusicLover92"
+}
+
+> {% client.global.set("token", response.body) %}
+
+### update user to make it uncontactable
+PUT http://localhost:8080/users/Elodie
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "biography": "Music teacher and singer",
+  "contactable": false
+}
+
+#### Connect the user "Lucas"
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+  "pseudo": "Lucas",
+  "password": "Password123"
+}
+
+> {% client.global.set("token", response.body) %}
+
+
+### Create a contact request with someone uncontactable (401)
+POST http://localhost:8080/contact
+Authorization: {{token}}
 Content-Type: application/json
 
 {
   "senderPseudo": "Lucas",
-  "receiverPseudo": "Sophie",
-  "message": "Hey Sophie, long time no see! How have you been?"
+  "receiverPseudo": "Sophie"
 }
 
-### Create a message
-POST http://localhost:8080/messages
-Content-Type: application/json
 
-{
-  "senderPseudo": "Sophie",
-  "receiverPseudo": "Lucas",
-  "message": "Hi Lucas! I've been great, thanks for asking. What about you?"
-}
-
-### Create a message
-POST http://localhost:8080/messages
-Content-Type: application/json
-
-{
-  "senderPseudo": "Maxime",
-  "receiverPseudo": "Elodie",
-  "message": "Hello Elodie, are you free this weekend for a hiking trip?"
-}
-
-### Create a message
-POST http://localhost:8080/messages
-Content-Type: application/json
-
-{
-  "senderPseudo": "Elodie",
-  "receiverPseudo": "Maxime",
-  "message": "Hi Maxime! That sounds amazing, count me in!"
-}
-
-### Create a message
-POST http://localhost:8080/messages
-Content-Type: application/json
-
-{
-  "senderPseudo": "Julien",
-  "receiverPseudo": "Mélanie",
-  "message": "Hello Mélanie, I found a new recipe I'd like to try. Would you like to join?"
-}
-
-### Create a message
-POST http://localhost:8080/messages
-Content-Type: application/json
-
-{
-  "senderPseudo": "Mélanie",
-  "receiverPseudo": "Julien",
-  "message": "Hi Julien! That sounds delicious, I'd love to!"
-}
-
-### Get all messages for a user
-GET http://localhost:8080/messages/Lara
-
-### Get all messages for a user
+### Get all messages for a user with any message
 GET http://localhost:8080/messages/Lucas
+Authorization: {{token}}
 
-###
+
+#### Connect the user "Thomas"
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+  "pseudo": "Thomas",
+  "password": "123456"
+}
+
+> {% client.global.set("token", response.body) %}
+
+### attempt to create a contact request with someone whom exists a contact request (409)
 POST http://localhost:8080/contact
+Authorization: {{token}}
 Content-Type: application/json
 
 {
@@ -303,109 +383,51 @@ Content-Type: application/json
   "receiverPseudo": "Lara"
 }
 
-###
-GET http://localhost:8080/getList/Thomas/PENDING
-
-###
-GET http://localhost:8080/Lara/Thomas
-
-###
-GET http://localhost:8080/Thomas/Lara
-
-
-###
-PATCH http://localhost:8080/Thomas/Lara/ACTIVE
-
-
-### Create a contact request
-POST http://localhost:8080/contact
-Content-Type: application/json
-
-{
-  "senderPseudo": "Lara",
-  "receiverPseudo": "Sophie"
-}
-
-### Create a contact request
-POST http://localhost:8080/contact
-Content-Type: application/json
-
-{
-  "senderPseudo": "Sophie",
-  "receiverPseudo": "Maxime"
-}
-
-### Create a contact request
-POST http://localhost:8080/contact
-Content-Type: application/json
-
-{
-  "senderPseudo": "Maxime",
-  "receiverPseudo": "Elodie"
-}
-
-### Create a contact request
-POST http://localhost:8080/contact
-Content-Type: application/json
-
-{
-  "senderPseudo": "Elodie",
-  "receiverPseudo": "Julien"
-}
-
-### Create a contact request
-POST http://localhost:8080/contact
-Content-Type: application/json
-
-{
-  "senderPseudo": "Julien",
-  "receiverPseudo": "Lucas"
-}
-
-### Get list of pending contact requests for a user
-GET http://localhost:8080/getList/Lara/PENDING
-
-### Get contact status between two users
-GET http://localhost:8080/Sophie/Maxime
-
-### Get contact status between two users
-GET http://localhost:8080/Maxime/Elodie
-
-### Update contact status to ACTIVE
-PATCH http://localhost:8080/Sophie/Maxime/ACTIVE
-
-### Update contact status to ACTIVE
-PATCH http://localhost:8080/Maxime/Elodie/ACTIVE
-
-
-
-
-
-
-
-
 
 ### search users by gender
-GET http://localhost:9003/search/Thomas?gender=FEMALE
 
-### search users by birth country
-GET http://localhost:9003/search/Lara?birthCountry=Belgium
+GET http://localhost:9003/search/Thomas?gender=FEMALE
+Authorization: {{token}}
+
 
 ### search users by mother tongue
 GET http://localhost:9003/search/Thomas?motherTongue=French
+Authorization: {{token}}
 
 ### search users with minimum age of 25
 GET http://localhost:9003/search/Thomas?minAge=25
+Authorization: {{token}}
 
 ### search users with maximum age of 30
 GET http://localhost:9003/search/Thomas?maxAge=30
+Authorization: {{token}}
 
 ### search users between ages 25 and 30
 GET http://localhost:9003/search/Thomas?minAge=25&maxAge=30
+Authorization: {{token}}
 
 ### search users by gender and birth country
 GET http://localhost:9003/search/Thomas?gender=FEMALE&birthCountry=Belgium
+Authorization: {{token}}
 
 ### search users by gender, age range, and mother tongue
 GET http://localhost:9003/search/Thomas?gender=MALE&minAge=25&maxAge=30&motherTongue=French
+Authorization: {{token}}
+
+
+#### Connect the user "Lara"
+POST http://localhost:8080/authentication/connect
+Content-Type: application/json
+
+{
+  "pseudo": "Lara",
+  "password": "MotDePasseTest"
+}
+
+> {% client.global.set("token", response.body) %}
+
+
+### search users by birth country
+GET http://localhost:9003/search/Lara?birthCountry=Belgium
+Authorization: {{token}}
 

@@ -16,7 +16,7 @@ public class ContactsController {
     private final ContactsService service;
 
 
-    public ContactsController(ContactsService aNewservice, UsersProxy aNewusersProxy) {
+    public ContactsController(ContactsService aNewservice) {
         this.service = aNewservice;
 
     }
@@ -30,6 +30,15 @@ public class ContactsController {
     public ResponseEntity<Contact> addContact(@RequestBody ContactRequest contactRequest) {
         if(contactRequest.getSenderPseudo().equals(contactRequest.getReceiverPseudo())){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(service.getUser(contactRequest.getReceiverPseudo()) == null || service.getUser(contactRequest.getSenderPseudo()) == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(!service.getUser(contactRequest.getReceiverPseudo()).isContactable() || !service.getUser(contactRequest.getSenderPseudo()).isContactable()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        if(getContact(contactRequest.getSenderPseudo(), contactRequest.getReceiverPseudo()).getStatusCodeValue() == 200){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         Contact savedContact = service.save(contactRequest);
         if (savedContact == null) {
@@ -46,10 +55,15 @@ public class ContactsController {
      */
     @GetMapping("/{senderPseudo}/{receiverPseudo}")
     public ResponseEntity<Contact> getContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo) {
-        System.out.println("On est dans la méthode getContact");
+        if(senderPseudo == null || receiverPseudo == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if(service.getUser(receiverPseudo) == null || service.getUser(senderPseudo) == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Contact contact = service.getContact(senderPseudo, receiverPseudo);
         if (contact == null) {
-
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(contact, HttpStatus.OK);
@@ -63,7 +77,28 @@ public class ContactsController {
      */
     @GetMapping("/getList/{senderPseudo}/{stateContact}")
     public ResponseEntity<List<Contact>> getContacts(@PathVariable String senderPseudo, @PathVariable String stateContact) {
+        if(stateContact == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(service.getUser(senderPseudo) == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         List<Contact> contacts = service.getContacts(senderPseudo, stateContact);
+        if (contacts == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(contacts, HttpStatus.OK);
+    }
+
+    @GetMapping("/getList/{senderPseudo}")
+    public ResponseEntity<List<Contact>> getContacts(@PathVariable String senderPseudo) {
+        if(senderPseudo == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(service.getUser(senderPseudo) == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        List<Contact> contacts = service.getAllContactsForAUSer(senderPseudo);
         if (contacts == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -77,9 +112,14 @@ public class ContactsController {
      * @param status the state of the contact
      * @return the modified contact if it exists, else return a 404 status
      */
-    @PatchMapping("/{senderPseudo}/{receiverPseudo}/{status}")
+    @PutMapping("/{senderPseudo}/{receiverPseudo}/{status}")
     public ResponseEntity<Contact> modifyContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @PathVariable String status) {
-        System.out.println("L'appel à correctement été fait");
+        if(status == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(service.getUser(receiverPseudo) == null || service.getUser(senderPseudo) == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Contact contactModified = service.updateContact(senderPseudo, receiverPseudo, status);
         if (contactModified == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

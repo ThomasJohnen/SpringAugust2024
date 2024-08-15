@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import socialtaal.search.models.Genders;
 import socialtaal.search.models.User;
 
 import java.util.List;
@@ -39,7 +40,29 @@ public class SearchController {
             @RequestParam(required = false) Integer minAge,
             @RequestParam(required = false) Integer maxAge
     ) {
-        return new ResponseEntity<>(searchService.searchUsers(pseudo, gender, minAge, maxAge, birthCountry, motherTongue), HttpStatus.OK);
+        if(pseudo == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(searchService.getUser(pseudo) == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(gender != null) {
+            boolean isGenderRight = false;
+            for (Genders o : Genders.values()) {
+                if(o.toString().equals(gender))
+                    isGenderRight = true;
+            }
+            if(!isGenderRight) {
+                System.out.println("issue with gender");
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        List<User> users = searchService.searchUsers(pseudo, gender, minAge, maxAge, birthCountry, motherTongue);
+        if(users == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
 }

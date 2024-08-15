@@ -128,6 +128,25 @@ public class GatewayController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
+    @PutMapping("/users/{pseudo}")
+    public ResponseEntity<User> updateUser(@PathVariable String pseudo, @RequestBody Profile profile, @RequestHeader("Authorization") String token) {
+        String pseudoToken = service.verify(token);
+        if(!pseudoToken.equals(pseudo)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        if(pseudo == null || profile == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            User updatedUser = service.updateUser(pseudo, profile);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
     /**
      * Delete a user
@@ -152,7 +171,11 @@ public class GatewayController {
      * @return the created contact if it doesn't exist, else return a 400 status
      */
     @PostMapping("/contact")
-    public ResponseEntity<Contact> addContact(@RequestBody ContactRequest contactRequest) {
+    public ResponseEntity<Contact> addContact(@RequestBody ContactRequest contactRequest, @RequestHeader("Authorization") String token) {
+        String pseudoToken = service.verify(token);
+        if(!pseudoToken.equals(contactRequest.getSenderPseudo())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         if(contactRequest.getSenderPseudo().equals(contactRequest.getReceiverPseudo())){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -161,6 +184,10 @@ public class GatewayController {
             return new ResponseEntity<>(savedContact, HttpStatus.CREATED);
         } catch (BadRequestException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (ConflictException e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (UnauthorizedException e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -171,7 +198,11 @@ public class GatewayController {
      * @return the contact if it exists, else return a 404 status
      */
     @GetMapping("/{senderPseudo}/{receiverPseudo}")
-    public ResponseEntity<Contact> getContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo) {
+    public ResponseEntity<Contact> getContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @RequestHeader("Authorization") String token) {
+        String pseudoToken = service.verify(token);
+        if(!pseudoToken.equals(senderPseudo) && !pseudoToken.equals(receiverPseudo)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         if(senderPseudo == null || receiverPseudo == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -181,6 +212,8 @@ public class GatewayController {
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -192,7 +225,11 @@ public class GatewayController {
      * @return a list of all contacts
      */
     @GetMapping("/getList/{senderPseudo}/{stateContact}")
-    public ResponseEntity<List<Contact>> getContacts(@PathVariable String senderPseudo, @PathVariable String stateContact) {
+    public ResponseEntity<List<Contact>> getContacts(@PathVariable String senderPseudo, @PathVariable String stateContact, @RequestHeader("Authorization") String token) {
+        String pseudoToken = service.verify(token);
+        if(!pseudoToken.equals(senderPseudo)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         if(senderPseudo == null || stateContact == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -201,6 +238,8 @@ public class GatewayController {
             return new ResponseEntity<>(contacts, HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -211,9 +250,12 @@ public class GatewayController {
      * @param status the state of the contact
      * @return the modified contact if it exists, else return a 404 status
      */
-    @PatchMapping("/{senderPseudo}/{receiverPseudo}/{status}")
-    public ResponseEntity<Contact> modifyContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @PathVariable String status) {
-        System.out.println("On rentre dans la méthode  modifyContact du GatewayController");
+    @PutMapping("/{senderPseudo}/{receiverPseudo}/{status}")
+    public ResponseEntity<Contact> modifyContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @PathVariable String status, @RequestHeader("Authorization") String token) {
+        String pseudoToken = service.verify(token);
+        if(!pseudoToken.equals(senderPseudo) && !pseudoToken.equals(receiverPseudo)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         if(senderPseudo == null || receiverPseudo == null || status == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -222,6 +264,8 @@ public class GatewayController {
             return new ResponseEntity<>(contactModified, HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -235,8 +279,11 @@ public class GatewayController {
      * @return the added message
      */
     @PostMapping("/messages")
-    public ResponseEntity<Message> addMessage(@RequestBody MessagePosted message) {
-        System.out.println("Je suis dans le controller du gateway");
+    public ResponseEntity<Message> addMessage(@RequestBody MessagePosted message, @RequestHeader("Authorization") String token) {
+        String pseudoToken = service.verify(token);
+        if(!pseudoToken.equals(message.getSenderPseudo())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         if(message == null || message.getMessage() == null || message.getSenderPseudo() == null || message.getReceiverPseudo() == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -247,6 +294,8 @@ public class GatewayController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (UnauthorizedException e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -256,9 +305,22 @@ public class GatewayController {
      * @return the list of messages
      */
     @GetMapping("/messages/{pseudo}")
-    public ResponseEntity<List<Message>> getMessages(@PathVariable String pseudo) {
-        List<Message> messages = service.getMessages(pseudo);
-        return new ResponseEntity<>(messages, HttpStatus.OK);
+    public ResponseEntity<List<Message>> getMessages(@PathVariable String pseudo, @RequestHeader("Authorization") String token) {
+        String pseudoToken = service.verify(token);
+        if(!pseudoToken.equals(pseudo)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        if (pseudo == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            List<Message> messages = service.getMessages(pseudo);
+            return new ResponseEntity<>(messages, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 
@@ -281,14 +343,24 @@ public class GatewayController {
             @RequestParam(required = false) String birthCountry,
             @RequestParam(required = false) String motherTongue,
             @RequestParam(required = false) Integer minAge,
-            @RequestParam(required = false) Integer maxAge
-    ) {
+            @RequestParam(required = false) Integer maxAge,
+            @RequestHeader("Authorization") String token
+    ){
+        String pseudoToken = service.verify(token);
+        if(!pseudoToken.equals(pseudo)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         if(pseudo == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        System.out.println("La requête controller est bien trouvée");
+        try{
+            return new ResponseEntity<>(service.searchUsers(pseudo, gender, minAge, maxAge, birthCountry, motherTongue), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-        return new ResponseEntity<>(service.searchUsers(pseudo, gender, minAge, maxAge, birthCountry, motherTongue), HttpStatus.OK);
     }
 
 }

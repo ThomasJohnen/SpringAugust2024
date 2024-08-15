@@ -1,0 +1,347 @@
+openapi: 3.0.3
+info:
+  title: SocialTaal Gateway API
+  description: |
+    This Gateway API integrates various microservices, including Authentication, User, Contact, Message, and Search services.
+    It provides a unified API to interact with these services.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:9000
+    description: Local development server
+
+paths:
+  /authentication/connect:
+    post:
+      summary: Connect a user and obtain a token
+      requestBody:
+        description: The credentials of the user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '200':
+          description: Token returned successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoMCIsInBzZXVkbyI6IkNhdDRMaWZlIn0.LqfooEI-I9VTBo-isjm812ttnIPagMCwdhRkW5ngn0_tlLX86LRoxahgskmgIeWDbm4Mu3y3D8Qbhq_71hNQTA
+        '400':
+          description: Invalid credentials
+        '401':
+          description: Unauthorized access
+
+  /authentication/verify:
+    post:
+      summary: Verify a token and return the pseudo
+      requestBody:
+        description: The token to verify
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoMCIsInBzZXVkbyI6IkNhdDRMaWZlIn0.LqfooEI-I9VTBo-isjm812ttnIPagMCwdhRkW5ngn0_tlLX86LRoxahgskmgIeWDbm4Mu3y3D8Qbhq_71hNQTA
+      responses:
+        '200':
+          description: Token is valid, returns the pseudo
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Thomas
+        '401':
+          description: Unauthorized, token is invalid
+
+  /authentication/{pseudo}:
+    put:
+      summary: Update user credentials
+      parameters:
+        - name: pseudo
+          in: path
+          required: true
+          description: The pseudo of the user
+          schema:
+          ²type: string
+      requestBody:
+        description: The user's credentials
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '200':
+          description: Credentials updated successfully
+        '400':
+          description: Bad request, credentials mismatch
+        '404':
+          description: Credentials not found
+
+  /users/{pseudo}:
+    parameters:
+      - name: pseudo
+        in: path
+        required: true
+        description: The pseudo of the user to retrieve or delete
+        schema:
+          type: string
+    get:
+      summary: Get a user by pseudo
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: 'User.yaml#/components/schemas/User'
+        '404':
+          description: User not found
+
+    delete:
+      summary: Delete a user by pseudo
+      responses:
+        '200':
+          description: User deleted successfully
+        '404':
+          description: User not found
+
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: List of all users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'User.yaml#/components/schemas/User'
+        '500':
+          description: Internal server error
+
+    post:
+      summary: Create a new user
+      requestBody:
+        description: Information about the user to create
+        content:
+          application/json:
+            schema:
+              $ref: 'User.yaml#/components/schemas/UserReceive'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: 'User.yaml#/components/schemas/User'
+        '400':
+          description: Bad request, invalid user data
+        '409':
+          description: Conflict, user already exists
+
+  /contact:
+    post:
+      summary: Add a contact
+      requestBody:
+        description: Contact request information
+        content:
+          application/json:
+            schema:
+              $ref: 'Contact.yaml#/components/schemas/ContactRequest'
+      responses:
+        '201':
+          description: Contact created successfully
+          content:
+            application/json:
+              schema:
+                $ref: 'Contact.yaml#/components/schemas/Contact'
+        '400':
+          description: Bad request, sender and receiver cannot be the same
+
+  /getList/{senderPseudo}/{stateContact}:
+    get:
+      summary: Get contacts by sender pseudo and status
+      parameters:
+        - name: senderPseudo
+          in: path
+          required: true
+          description: The pseudo of the sender
+          schema:
+            type: string
+        - name: stateContact
+          in: path
+          required: true
+          description: The status of the contact
+          schema:
+            type: string
+            enum: [ACTIVE, CLOSED]
+      responses:
+        '200':
+          description: List of contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'Contact.yaml#/components/schemas/Contact'
+        '404':
+          description: No contacts found
+
+  /{senderPseudo}/{receiverPseudo}:
+    parameters:
+      - name: senderPseudo
+        in: path
+        required: true
+        description: The pseudo of the sender
+        schema:
+          type: string
+      - name: receiverPseudo
+        in: path
+        required: true
+        description: The pseudo of the receiver
+        schema:
+          type: string
+    get:
+      summary: Get contact by sender and receiver pseudo
+      responses:
+        '200':
+          description: Contact found
+          content:
+            application/json:
+              schema:
+                $ref: 'Contact.yaml#/components/schemas/Contact'
+        '404':
+          description: Contact not found
+
+    patch:
+      summary: Update contact status
+      parameters:
+        - name: status
+          in: path
+          required: true
+          description: New status of the contact
+          schema:
+            type: string
+            enum: [ACTIVE, CLOSED]
+      responses:
+        '200':
+          description: Contact status updated
+          content:
+            application/json:
+              schema:
+                $ref: 'Contact.yaml#/components/schemas/Contact'
+        '404':
+          description: Contact not found
+        '400':
+          description: Bad request, invalid status
+
+  /messages:
+    post:
+      summary: Add a message
+      requestBody:
+        description: Message information
+        content:
+          application/json:
+            schema:
+              $ref: 'Message.yaml#/components/schemas/MessagePosted'
+      responses:
+        '200':
+          description: Message added
+          content:
+            application/json:
+              schema:
+                $ref: 'Message.yaml#/components/schemas/Message'
+        '400':
+          description: Bad request, missing information
+        '404':
+          description: Contact not found - so unable to send a message
+
+  /messages/{pseudo}:
+    get:
+      summary: Get all messages for a given pseudo
+      parameters:
+        - name: pseudo
+          in: path
+          required: true
+          description: The pseudo of the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'Message.Yaml#/components/schemas/Message'
+        '400':
+          description: Bad request, missing pseudo
+        '404':
+            description: No list of messages found in a way that the pseudo is not in the database
+  /search/{pseudo}:
+    get:
+      summary: Search users by various criteria
+      parameters:
+        - name: pseudo
+          in: path
+          required: true
+          description: The pseudo of the user making the search
+          schema:
+            type: string
+        - name: gender
+          in: query
+          description: Filter users by gender
+          schema:
+            type: string
+        - name: birthCountry
+          in: query
+          description: Filter users by birth country
+          schema:
+            type: string
+        - name: motherTongue
+          in: query
+          description: Filter users by mother tongue
+          schema:
+            type: string
+        - name: minAge
+          in: query
+          description: Minimum age for the search
+          schema:
+            type: integer
+        - name: maxAge
+          in: query
+          description: Maximum age for the search
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of users matching the search criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: 'User.yaml#/components/schemas/User'
+        '400':
+          description: Bad request, missing pseudo
+
+components:
+  schemas:
+    Credentials:
+      type: object
+      properties:
+        pseudo:
+          type: string
+        password:
+          type: string
+      required:
+        - pseudo
+        - password
+      example:
+        pseudo: "Thomas"
+        password: "password123"
+
+

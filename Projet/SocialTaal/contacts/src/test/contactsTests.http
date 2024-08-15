@@ -18,4 +18,4 @@ GET http://localhost:9004/Thomas/Lara
 
 
 ###
-PATCH http://localhost:9004/Thomas/Lara/ACTIVE
+PUT http://localhost:9004/Thomas/Lara/ACTIVE

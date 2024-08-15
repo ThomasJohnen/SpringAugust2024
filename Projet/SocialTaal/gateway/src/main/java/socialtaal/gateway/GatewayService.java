@@ -1,11 +1,11 @@
 package socialtaal.gateway;
 
 import org.springframework.http.ResponseEntity;
+import socialtaal.gateway.models.*;
 import socialtaal.gateway.exceptions.BadRequestException;
 import socialtaal.gateway.exceptions.ConflictException;
 import socialtaal.gateway.exceptions.NotFoundException;
 import socialtaal.gateway.exceptions.UnauthorizedException;
-import socialtaal.gateway.models.*;
 import feign.FeignException;
 import org.springframework.stereotype.Service;
 import socialtaal.gateway.repositories.*;
@@ -106,44 +106,59 @@ public class GatewayService {
         }
     }
 
+    public User updateUser(String pseudo, Profile profile) throws NotFoundException, BadRequestException {
+        try {
+            return userProxy.updateUser(pseudo, profile).getBody();
+        } catch (FeignException e) {
+            if (e.status() == 404) throw new NotFoundException();
+            else if(e.status() == 400) throw new BadRequestException();
+            else throw e;
+        }
+    }
+
 
 
     /* -----------------------------CONTACTS--------------------------------- */
 
-    public Contact addContact(ContactRequest contactRequest) throws BadRequestException {
+    public Contact addContact(ContactRequest contactRequest) throws BadRequestException, ConflictException, UnauthorizedException {
         try {
             return contactProxy.addContact(contactRequest).getBody();
         } catch (FeignException e) {
             if (e.status() == 400) throw new BadRequestException();
+            else if(e.status() == 409) throw new ConflictException();
+            else if(e.status() == 401) throw new UnauthorizedException();
             else throw e;
         }
     }
 
-    public Contact getContact(String senderPseudo, String receiverPseudo) throws NotFoundException {
+    public Contact getContact(String senderPseudo, String receiverPseudo) throws NotFoundException, BadRequestException {
         try {
             return contactProxy.getContact(senderPseudo, receiverPseudo).getBody();
         } catch (FeignException e) {
             if (e.status() == 404) throw new NotFoundException();
+            else if(e.status() == 400) throw new BadRequestException();
             else throw e;
         }
     }
 
-    public List<Contact> getContacts(String senderPseudo, String stateContact) throws NotFoundException {
+    public List<Contact> getContacts(String senderPseudo, String stateContact) throws NotFoundException, BadRequestException {
         try {
             return contactProxy.getContacts(senderPseudo, stateContact).getBody();
         } catch (FeignException e) {
             if (e.status() == 404) throw new NotFoundException();
+            else if (e.status() == 400) throw new BadRequestException();
             else throw e;
         }
     }
 
-    public Contact updateContact(String senderPseudo, String receiverPseudo, String status) throws NotFoundException {
+    public Contact updateContact(String senderPseudo, String receiverPseudo, String status) throws NotFoundException, BadRequestException {
         System.out.println("On est dans la suite de l'appel, dans la partie service");
         try {
             System.out.println("on tente d'appeler le proxy");
             return contactProxy.modifyContact(senderPseudo, receiverPseudo, status).getBody();
         } catch (FeignException e) {
             if (e.status() == 404) throw new NotFoundException();
+            else if(e.status() == 400) throw new BadRequestException();
             else throw e;
         }
     }
@@ -153,24 +168,39 @@ public class GatewayService {
     /* -----------------------------MESSAGES--------------------------------- */
 
 
-    public Message addMessage(MessagePosted messageEchange) throws BadRequestException, NotFoundException {
-        System.out.println("Je suis dans le service de gateway");
+    public Message addMessage(MessagePosted messageEchange) throws BadRequestException, NotFoundException, UnauthorizedException {
         try {
             return messageProxy.addMessage(messageEchange).getBody();
         } catch (FeignException e) {
             if (e.status() == 400) throw new BadRequestException();
             else if (e.status() == 404) throw new NotFoundException();
+            else if (e.status() == 401) throw new UnauthorizedException();
             else throw e;
         }
     }
 
-    public List<Message> getMessages(String pseudo) {
-        return messageProxy.getMessages(pseudo).getBody();
+    public List<Message> getMessages(String pseudo) throws NotFoundException, BadRequestException {
+        try{
+            return messageProxy.getMessages(pseudo).getBody();
+        }
+        catch (FeignException e) {
+            if(e.status() == 404) throw new NotFoundException();
+            if(e.status() == 400) throw new BadRequestException();
+            else throw e;
+        }
+
     }
 
     /* -------------------------------SEARCH------------------------------- */
 
-    public List<User> searchUsers(String pseudo, String gender, Integer minAge, Integer maxAge, String birthCountry, String motherTongue) {
-        return searchProxy.searchUsers(pseudo, gender, birthCountry, motherTongue, minAge, maxAge).getBody();
+    public List<User> searchUsers(String pseudo, String gender, Integer minAge, Integer maxAge, String birthCountry, String motherTongue) throws NotFoundException, BadRequestException {
+        try {
+            return searchProxy.searchUsers(pseudo, gender, birthCountry, motherTongue, minAge, maxAge).getBody();
+        } catch (FeignException e) {
+            if(e.status() == 404) throw new NotFoundException();
+            else if(e.status() == 400) throw new BadRequestException();
+            throw e;
+        }
+
     }
 }

@@ -14,6 +14,6 @@ import java.util.List;
 public interface ContactProxy {
 
 
-    @GetMapping("/getList/{senderPseudo}/{stateContact}")
-    ResponseEntity<List<Contact>> getContacts(@PathVariable String senderPseudo, @PathVariable String stateContact);
+    @GetMapping("/getList/{senderPseudo}")
+    ResponseEntity<List<Contact>> getContacts(@PathVariable String senderPseudo);
 }

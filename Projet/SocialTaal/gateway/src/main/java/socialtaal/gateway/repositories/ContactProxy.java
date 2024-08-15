@@ -24,7 +24,7 @@ public interface ContactProxy {
     @GetMapping("/{senderPseudo}/{receiverPseudo}")
     ResponseEntity<Contact> getContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo);
 
-    @PatchMapping("/{senderPseudo}/{receiverPseudo}/{status}")
+    @PutMapping("/{senderPseudo}/{receiverPseudo}/{status}")
     ResponseEntity<Contact> modifyContact(@PathVariable String senderPseudo, @PathVariable String receiverPseudo, @PathVariable String status);
 
 }

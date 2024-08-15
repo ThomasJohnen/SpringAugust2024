@@ -3,6 +3,7 @@ package socialtaal.contacts;
 import org.springframework.stereotype.Service;
 import socialtaal.contacts.models.Contact;
 import socialtaal.contacts.models.ContactRequest;
+import socialtaal.contacts.models.User;
 import socialtaal.contacts.repository.ContactsRepository;
 import socialtaal.contacts.repository.UsersProxy;
 
@@ -67,8 +68,7 @@ public class ContactsService {
      * @return the saved contact
      */
     public Contact save(ContactRequest contact) {
-        if( usersProxy.getUser(contact.getReceiverPseudo()) == null || usersProxy.getUser(contact.getSenderPseudo()) == null )
-            return null;
+
         Contact newContact = new Contact();
         newContact.setSenderPseudo(contact.getSenderPseudo());
         newContact.setReceiverPseudo(contact.getReceiverPseudo());
@@ -77,7 +77,6 @@ public class ContactsService {
     }
 
     public Contact updateContact(String senderPseudo, String receiverPseudo, String status) {
-        System.out.println("On est passé dans le ContactsService");
         Contact contact = getContact(senderPseudo, receiverPseudo);
         if (contact == null) {
             return null;
@@ -101,8 +100,12 @@ public class ContactsService {
      * Get all contacts
      * @return a list of all contacts
      */
-    public List<Contact> getAllContacts() {
-        Iterable<Contact> allContacts = repository.findAll();
+    public List<Contact> getAllContactsForAUSer(String pseudo) {
+        Iterable<Contact> allContacts = repository.findBySenderPseudo(pseudo);
         return StreamSupport.stream(allContacts.spliterator(), false).toList();
+    }
+
+    public User getUser(String pseudo) {
+        return usersProxy.getUser(pseudo).getBody();
     }
 }

@@ -1,0 +1,126 @@
+openapi: 3.0.3
+info:
+  title: Authentication Service
+  description: The Authentication Service handles user authentication within the SocialTaal platform.
+
+  version: 1.0.0
+servers:
+  - url: http://localhost:9004
+paths:
+  /authentication/connect:
+    post:
+      summary: Initiate a session for a user within SocialTaal
+      requestBody:
+        description: The user's credentials (authentication information).
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UnsafeCredentials'
+      responses:
+        '400':
+          description: The credentials are invalid.
+        '401':
+          description: Incorrect username or password.
+        '200':
+          description: The user is successfully connected. A JWT token is returned to maintain the session.
+          content:
+            'text/plain':
+              schema:
+                type: string
+                example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoMCIsInBzZXVkbyI6IkNhdDRMaWZlIn0.LqfooEI-I9VTBo-isjm812ttnIPagMCwdhRkW5ngn0_tlLX86LRoxahgskmgIeWDbm4Mu3y3D8Qbhq_71hNQTA
+  /authentication/verify:
+    post:
+      summary: Verify if a token corresponds to an active session.
+      requestBody:
+        description: The JWT token.
+        content:
+          'text/plain':
+            schema:
+              type: string
+              example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdXRoMCIsInBzZXVkbyI6IkNhdDRMaWZlIn0.LqfooEI-I9VTBo-isjm812ttnIPagMCwdhRkW5ngn0_tlLX86LRoxahgskmgIeWDbm4Mu3y3D8Qbhq_71hNQTA
+      responses:
+        '401':
+          description: The token could not be verified.
+        '200':
+          description: Verification succeeded. The username associated with the session identified by this token is returned.
+          content:
+            'application/json':
+              schema:
+                type: string
+                example: Thomas
+
+  /authentication/{username}:
+    parameters:
+      - name: username
+        in: path
+        description: The username of the user (see 'user.yaml' service for more details).
+        schema:
+          type: string
+        required: true
+    post:
+      summary: Create credentials for a given user.
+      requestBody:
+        description: The user's credentials.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UnsafeCredentials'
+      responses:
+        '400':
+          description: The credentials are invalid.
+        '409':
+          description: The credentials already exist.
+        '201':
+          description: The credentials have been successfully created.
+    put:
+      summary: Update the credentials of an existing user.
+      requestBody:
+        description: The user's credentials.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UnsafeCredentials'
+      responses:
+        '400':
+          description: The credentials are invalid.
+        '404':
+          description: The credentials could not be found.
+        '200':
+          description: The credentials have been successfully updated.
+
+    delete:
+      summary: Delete a user's credentials.
+      responses:
+        '404':
+          description: The credentials could not be found.
+        '200':
+          description: The credentials have been deleted.
+
+components:
+  schemas:
+    UnsafeCredentials:
+      type: object
+      description: Credentials are the identification data of a user within the system. They only serve to verify that the person exists and has authenticated correctly. They do not provide any information about the real person.
+      properties:
+        username:
+          type: string
+          description: The username is a name chosen by the user. This name is used as a unique identifier within the system.
+        password:
+          type: string
+          description: The user's password.
+      example:
+        username: Thomas
+        password: password123
+    SafeCredentials:
+      type: object
+      description: SafeCredentials represent the credentials of a user in a secure format, including a hashed password.
+      properties:
+        pseudo:
+          type: string
+          description: The pseudo is a unique identifier for the user in the system.
+        hashedPassword:
+          type: string
+          description: The hashed password of the user. This is a secured representation of the user's password.
+      example:
+        pseudo: Thomas
+        hashedPassword: $2a$12$ePjbW3GFUlGC6VdbHEpW/.8lZ1CTvBR51FRa4uJRh2/CRXwzHK2Ca

@@ -2,6 +2,8 @@ openapi: 3.0.0
 info:
   title: Message Service
   description: This service manages sending and retrieving messages between users.
+    Users can send messages to each other, and retrieve messages they have sent or received.
+    This service works in conjunction with the User Service and Contact Service to ensure that messages are sent to valid users.
   version: 1.0.0
 servers:
   - url: http://localhost:9005
@@ -27,7 +29,10 @@ paths:
         '400':
           description: Error in sending the message
         '404':
-          description: User not found
+          description: any right contact found
+        '401':
+            description: Unauthorized to send message because any valid contact
+
   /messages/{pseudo}:
     get:
       summary: Retrieve a user's messages
@@ -50,6 +55,8 @@ paths:
                   $ref: '#/components/schemas/Message'
         '404':
           description: No messages found for this user
+        '400':
+            description: Error in retrieving messages - missing pseudo or invalid pseudo
 
 components:
   schemas:
@@ -106,4 +113,4 @@ components:
         senderPseudo: Alice
         receiverPseudo: Bob
         message: Hi Bob, how are you?
-        timestamp: 2024-08-14T10:15:30Z
+        timestamp: 1723656252493

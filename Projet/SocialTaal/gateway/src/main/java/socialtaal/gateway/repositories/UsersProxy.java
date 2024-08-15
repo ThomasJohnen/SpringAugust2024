@@ -3,6 +3,7 @@ package socialtaal.gateway.repositories;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+
 import org.springframework.web.bind.annotation.*;
 import socialtaal.gateway.models.User;
 import socialtaal.gateway.models.UserReceive;
@@ -18,11 +19,14 @@ public interface UsersProxy {
     ResponseEntity<User> getUser(@PathVariable String pseudo);
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers();
+    ResponseEntity<List<User>> getUsers();
 
     @PostMapping("/users")
-    public ResponseEntity<User> createUser( @RequestBody UserReceive userReceived);
+    ResponseEntity<User> createUser( @RequestBody UserReceive userReceived);
 
     @DeleteMapping("/users/{pseudo}")
-    public ResponseEntity<User> deleteUser(@PathVariable String pseudo);
+    ResponseEntity<User> deleteUser(@PathVariable String pseudo);
+
+    @PutMapping("/users/{pseudo}")
+    ResponseEntity<User> updateUser(@PathVariable String pseudo, @RequestBody socialtaal.gateway.models.Profile profileToUpdate);
 }
